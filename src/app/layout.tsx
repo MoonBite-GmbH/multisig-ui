@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Header from "@/components/layout/Header";
+import { Toaster } from "@/components/ui/Toaster";
 import SidebarNav from "@/components/layout/SidebarNav";
 
 const fontSans = FontSans({
@@ -35,6 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster />
           <Header />
           <div className="flex h-screen border-collapse overflow-hidden">
             <SidebarNav />

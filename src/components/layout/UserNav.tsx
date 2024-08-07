@@ -10,8 +10,10 @@ import {
 import { Button } from "@/components/ui/Button";
 import { LogOut } from "lucide-react";
 import { UserAvatar } from "@/components/layout/UserAvatar";
+import { usePersistStore } from "@/state/store";
 
 export function UserNav() {
+  const storePersist = usePersistStore();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -19,11 +21,17 @@ export function UserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <div className="flex items-center justify-start gap-4 p-2">
-          <div className="flex flex-col space-y-1 leading-none">aaasd</div>
+          <div className="flex flex-col space-y-1 leading-none">
+            {storePersist.wallet.address}
+          </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Button variant="outline" className="w-full">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => storePersist.disconnectWallet()}
+          >
             <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
             Log Out
           </Button>
