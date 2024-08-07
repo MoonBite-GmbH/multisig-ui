@@ -42,6 +42,7 @@ export const useUserMultisigs = async () => {
     return {
       info,
       members,
+      address: address,
     };
   });
 

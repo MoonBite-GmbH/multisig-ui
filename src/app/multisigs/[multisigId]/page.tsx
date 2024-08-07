@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import * as MultisigContract from "@/lib/contract";
 import { Proposal } from "@/lib/contract";
 import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
+import { Button } from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
 
 interface MultisigPageParams {
   readonly params: {
@@ -12,6 +14,8 @@ interface MultisigPageParams {
 }
 
 const MultisigPage = ({ params }: MultisigPageParams) => {
+  const router = useRouter();
+
   const [members, setMembers] = useState<string[]>([]);
   const [info, setInfo] = useState<any>();
   const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -36,7 +40,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
     const latestProposal = (await msigClient.query_last_proposal_id()).result;
 
     // If there are no proposals
-    if (latestProposal === 0) {
+    if (latestProposal == 0) {
       return;
     }
 
@@ -61,6 +65,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
             <div className="space-y-2">
               <h1>Multisig {info.name}</h1>
               <p>{info.description}</p>
+              <Button onClick={() => {router.push(`/multisigs/${params.multisigId}/proposal/create`)}}>Create Proposal</Button>
               <div className="flex items-center justify-between p-4 rounded-lg border-2">
                 <div className="flex items-center">
                   <div className="text-green-500 mr-2">✔</div>

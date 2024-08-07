@@ -37,7 +37,7 @@ export const NETWORK_PASSPHRASE: string = "Test SDF Network ; September 2015";
  * The Soroban RPC endpoint used to initialize this library.
  */
 export const RPC_URL: string =
-  "https://clean-spring-log.stellar-testnet.quiknode.pro/";
+  "https://soroban-testnet.stellar.org/";
 
 export const DEPLOY_CONTRACT_ID: string =
   "CAERBL6MW3K5DWZQWLPV24PLAD63IBWZ5QKABHPUWCMM4IMMGV6WPMZG";
@@ -45,4 +45,5 @@ export const DEPLOY_CONTRACT_ID: string =
 // TODO: Fetch multisigs from the api, for now we will use this hardcoded list
 export const MULTISIGS = [
   "CCZ7IPQPGPV4JF6TROB7MWEAFBWEQDOLXNFIN3XAXT3JZR3EVCWJ77AW",
+  "CCJT7H7JZ5EDV5FIJMKKGBVBOR2OGEURELD7HINKGTKNOBRW6HHR5WNU"
 ];

@@ -20,8 +20,11 @@ import {
 import { PlusIcon, VoteIcon } from "lucide-react";
 import { useUserMultisigs } from "@/hooks/useMultisig";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   const [msigData, setMsigData] = useState<any>();
 
   const notification = {
@@ -46,9 +49,10 @@ export default function Home() {
           msigData.map((msig: any) => (
             <div
               key={msig.info.title}
+              onClick={() => {router.push(`/multisigs/${msig.address}`)}}
               className="grid grid-cols-1 gap-4 md:grid-cols-2 mt-4 col-span-1 md:col-span-7"
             >
-              <Card>
+              <Card className="cursor-pointer">
                 <CardHeader>
                   <CardTitle>{msig.info.name}</CardTitle>
                   <CardDescription>{msig.info.description}</CardDescription>

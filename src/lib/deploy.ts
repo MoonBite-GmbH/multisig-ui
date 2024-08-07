@@ -48,6 +48,8 @@ export const deployMultisigContract = async (
       members,
       quorum_bps,
     });
+
+
     const res = await tx.signAndSend();
     return res.result;
   } catch (error) {
