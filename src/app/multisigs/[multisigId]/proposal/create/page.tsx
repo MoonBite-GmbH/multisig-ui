@@ -27,6 +27,8 @@ import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import * as MultisigContract from "@/lib/contract";
 import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
+import { createTransactionProposal } from "@/lib/multisig";
+import { xBull } from "@/lib/wallets/xbull";
 
 const schema = z.object({
   type: z.enum(["transaction", "update"], {
@@ -35,13 +37,13 @@ const schema = z.object({
   title: z.string().nonempty({ message: "Required" }),
   description: z.string().nonempty({ message: "Required" }),
   recipient: z.string().nonempty({ message: "Required" }).optional(),
-  amount: z.number().min(1, "Must be greater than zero").optional(),
+  amount: z.coerce.number().min(1, "Must be greater than zero").optional(),
   token: z.string().nonempty({ message: "Required" }).optional(),
-  new_wasm_hash: z.string().nonempty({ message: "Required" }).optional(),
+  new_wasm_hash: z.string().optional(),
 });
 
 interface ProposalForm {
-  type: "transaction" | "update";
+  type: string;
   title: string;
   description: string;
   recipient?: string;
@@ -50,7 +52,13 @@ interface ProposalForm {
   new_wasm_hash?: string;
 }
 
-const CreateProposalPage: NextPage = ({ params }) => {
+interface CreatePorposalPageParams {
+  readonly params: {
+    readonly multisigId: string;
+  };
+}
+
+const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
   const appStore = usePersistStore();
   const { toast } = useToast();
 
@@ -68,6 +76,7 @@ const CreateProposalPage: NextPage = ({ params }) => {
   });
 
   const onSubmit = async (values: ProposalForm) => {
+    console.log("submit")
     const {
       type,
       title,
@@ -119,12 +128,20 @@ const CreateProposalPage: NextPage = ({ params }) => {
           });
           return;
         }
-        const msigClient = new MultisigContract.Client({
-          publicKey: appStore.wallet.publicKey!,
-          contractId: params.multisigId,
-          rpcUrl: RPC_URL,
-          networkPassphrase: NETWORK_PASSPHRASE,
-        });
+        
+        const result = await createTransactionProposal(
+          new xBull(),
+          appStore.wallet.address!,
+          params.multisigId,
+          {
+            title,
+            description,
+            recipient,
+            amount,
+            token,
+          }
+        );
+
       } else {
         if (!new_wasm_hash) {
           toast({
@@ -140,10 +157,11 @@ const CreateProposalPage: NextPage = ({ params }) => {
           return;
         }
         const wasmHashBuffer = Buffer.from(new_wasm_hash, "hex");
+        /*
         await createUpdateProposal({
           sender: appStore.wallet.address!,
           new_wasm_hash: wasmHashBuffer,
-        });
+        });*/
       }
       toast({
         className: cn(
