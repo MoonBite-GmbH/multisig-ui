@@ -27,6 +27,8 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
     setInfo(sigInfo.info);
     setMembers(sigInfo.members);
 
+    console.log("init client")
+
     // Here comes the tricky part, as we can't iterate through proposals on that msig
     // Need to fetch the latest ID. If the latest ID is 0, there are non proposals.
     // If it's higher then 0, we need to query each proposal from the multisig
@@ -38,6 +40,14 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
 
     // Query latest
     const latestProposal = (await msigClient.query_last_proposal_id()).result;
+
+    console.log("latest proposal", latestProposal)
+
+    const tesstProposal = await msigClient.query_all_proposals();
+
+    const testProposal = await msigClient.query_proposal({proposal_id: 1})
+
+    console.log(testProposal.result)
 
     // If there are no proposals
     if (latestProposal == 0) {
