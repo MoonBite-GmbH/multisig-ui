@@ -92,6 +92,9 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
             <div className="space-y-2">
               <h1>Multisig {info.name}</h1>
               <p>{info.description}</p>
+              <div>{members.map((member, index) => (
+                <div key={index}>{member}</div>
+              ))}</div>
               <Button
                 onClick={() => {
                   router.push(
@@ -117,7 +120,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                       <TableRow
                         key={index}
                         onClick={() => {
-                          router.push(`/multisigs/${params.multisigId}/proposals/${index}`);
+                          router.push(`/multisigs/${params.multisigId}/proposals/${entry.id}`);
                         }}
                       >
                         <TableCell>{Number(entry.id)}</TableCell>
