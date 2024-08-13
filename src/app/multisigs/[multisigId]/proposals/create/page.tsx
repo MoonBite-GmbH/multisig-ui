@@ -76,7 +76,6 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
   });
 
   const onSubmit = async (values: ProposalForm) => {
-    console.log("submit")
     const {
       type,
       title,
