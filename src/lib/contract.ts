@@ -4,6 +4,7 @@ import {
   Client as ContractClient,
   ClientOptions as ContractClientOptions,
   Spec as ContractSpec,
+  Result,
 } from "@stellar/stellar-sdk/contract";
 
 export type u32 = number;
@@ -47,7 +48,7 @@ export const Errors = {
 };
 
 export interface Proposal {
-  id: u32;
+  id: u64;
   proposal: ProposalType;
   sender: string;
   status: ProposalStatus;
@@ -131,8 +132,8 @@ export interface Client {
        * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
        */
       simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<null>>;
+    }
+  ) => Promise<AssembledTransaction<Result<void>>>;
 
   /**
    * Construct and simulate a create_transaction_proposal transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -168,8 +169,8 @@ export interface Client {
        * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
        */
       simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<null>>;
+    }
+  ) => Promise<AssembledTransaction<Result<void>>>;
 
   /**
    * Construct and simulate a create_update_proposal transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -191,14 +192,14 @@ export interface Client {
        * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
        */
       simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<null>>;
+    }
+  ) => Promise<AssembledTransaction<Result<void>>>;
 
   /**
    * Construct and simulate a sign_proposal transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   sign_proposal: (
-    { sender, proposal_id }: { sender: string; proposal_id: u32 },
+    { sender, proposal_id }: { sender: string; proposal_id: u64 },
     options?: {
       /**
        * The fee to pay for the transaction. Default: BASE_FEE
@@ -214,14 +215,14 @@ export interface Client {
        * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
        */
       simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<null>>;
+    }
+  ) => Promise<AssembledTransaction<Result<void>>>;
 
   /**
    * Construct and simulate a execute_proposal transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   execute_proposal: (
-    { sender, proposal_id }: { sender: string; proposal_id: u32 },
+    { sender, proposal_id }: { sender: string; proposal_id: u64 },
     options?: {
       /**
        * The fee to pay for the transaction. Default: BASE_FEE
@@ -237,31 +238,8 @@ export interface Client {
        * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
        */
       simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<null>>;
-
-  /**
-   * Construct and simulate a remove_proposal transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   */
-  remove_proposal: (
-    { sender, proposal_id }: { sender: string; proposal_id: u32 },
-    options?: {
-      /**
-       * The fee to pay for the transaction. Default: BASE_FEE
-       */
-      fee?: number;
-
-      /**
-       * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
-       */
-      timeoutInSeconds?: number;
-
-      /**
-       * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
-       */
-      simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<null>>;
+    }
+  ) => Promise<AssembledTransaction<Result<void>>>;
 
   /**
    * Construct and simulate a query_multisig_info transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -281,7 +259,7 @@ export interface Client {
      * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
      */
     simulate?: boolean;
-  }) => Promise<AssembledTransaction<MultisigInfo>>;
+  }) => Promise<AssembledTransaction<Result<MultisigInfo>>>;
 
   /**
    * Construct and simulate a query_multisig_members transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -301,13 +279,13 @@ export interface Client {
      * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
      */
     simulate?: boolean;
-  }) => Promise<AssembledTransaction<Array<string>>>;
+  }) => Promise<AssembledTransaction<Result<Array<string>>>>;
 
   /**
    * Construct and simulate a query_proposal transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   query_proposal: (
-    { proposal_id }: { proposal_id: u32 },
+    { proposal_id }: { proposal_id: u64 },
     options?: {
       /**
        * The fee to pay for the transaction. Default: BASE_FEE
@@ -323,14 +301,14 @@ export interface Client {
        * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
        */
       simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<Option<Proposal>>>;
+    }
+  ) => Promise<AssembledTransaction<Result<Proposal>>>;
 
   /**
    * Construct and simulate a query_signatures transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   query_signatures: (
-    { proposal_id }: { proposal_id: u32 },
+    { proposal_id }: { proposal_id: u64 },
     options?: {
       /**
        * The fee to pay for the transaction. Default: BASE_FEE
@@ -346,8 +324,8 @@ export interface Client {
        * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
        */
       simulate?: boolean;
-    },
-  ) => Promise<AssembledTransaction<Array<readonly [string, boolean]>>>;
+    }
+  ) => Promise<AssembledTransaction<Result<Array<readonly [string, boolean]>>>>;
 
   /**
    * Construct and simulate a query_last_proposal_id transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -367,7 +345,7 @@ export interface Client {
      * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
      */
     simulate?: boolean;
-  }) => Promise<AssembledTransaction<u32>>;
+  }) => Promise<AssembledTransaction<Result<u64>>>;
 
   /**
    * Construct and simulate a query_all_proposals transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -387,49 +365,73 @@ export interface Client {
      * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
      */
     simulate?: boolean;
-  }) => Promise<AssembledTransaction<Array<Proposal>>>;
+  }) => Promise<AssembledTransaction<Result<Array<Proposal>>>>;
+
+  /**
+   * Construct and simulate a is_proposal_ready transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   */
+  is_proposal_ready: (
+    { proposal_id }: { proposal_id: u64 },
+    options?: {
+      /**
+       * The fee to pay for the transaction. Default: BASE_FEE
+       */
+      fee?: number;
+
+      /**
+       * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+       */
+      timeoutInSeconds?: number;
+
+      /**
+       * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+       */
+      simulate?: boolean;
+    }
+  ) => Promise<AssembledTransaction<Result<boolean>>>;
 }
 
 export class Client extends ContractClient {
   constructor(public readonly options: ContractClientOptions) {
     super(
       new ContractSpec([
-        "AAAAAAAAAMVJbml0aWFsaXplIHRoZSBjb250cmFjdAptZW1iZXJzIGlzIGEgdmVjdG9yIG9mIGFkZHJlc3NlcyB0aGF0IHRoaXMgbXVsdGlzaWcgd2lsbCBjb25zaXN0IG9mCnF1b3J1bV9icHMgcmVxdWlyZXMgdG8gcGFzcyB0aGUgbWluaW11bSBhbW91bnQgb2YgcmVxdWlyZWQgc2lnbmVycyBpbiBCUFMKaWYgbm90IHByZXNlbnQsIGRlZmF1bHQgaWYgMTAwJQAAAAAAAAppbml0aWFsaXplAAAAAAAEAAAAAAAAAARuYW1lAAAAEAAAAAAAAAALZGVzY3JpcHRpb24AAAAAEAAAAAAAAAAHbWVtYmVycwAAAAPqAAAAEwAAAAAAAAAKcXVvcnVtX2JwcwAAAAAD6AAAAAQAAAAA",
-        "AAAAAAAAAAAAAAAbY3JlYXRlX3RyYW5zYWN0aW9uX3Byb3Bvc2FsAAAAAAYAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAFdGl0bGUAAAAAAAAQAAAAAAAAAAtkZXNjcmlwdGlvbgAAAAAQAAAAAAAAAAlyZWNpcGllbnQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAYAAAAAAAAABXRva2VuAAAAAAAAEwAAAAA=",
-        "AAAAAAAAAAAAAAAWY3JlYXRlX3VwZGF0ZV9wcm9wb3NhbAAAAAAAAgAAAAAAAAAGc2VuZGVyAAAAAAATAAAAAAAAAA1uZXdfd2FzbV9oYXNoAAAAAAAD7gAAACAAAAAA",
-        "AAAAAAAAAAAAAAANc2lnbl9wcm9wb3NhbAAAAAAAAAIAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAALcHJvcG9zYWxfaWQAAAAABAAAAAA=",
-        "AAAAAAAAAAAAAAAQZXhlY3V0ZV9wcm9wb3NhbAAAAAIAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAALcHJvcG9zYWxfaWQAAAAABAAAAAA=",
-        "AAAAAAAAAAAAAAAPcmVtb3ZlX3Byb3Bvc2FsAAAAAAIAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAALcHJvcG9zYWxfaWQAAAAABAAAAAA=",
-        "AAAAAAAAAAAAAAATcXVlcnlfbXVsdGlzaWdfaW5mbwAAAAAAAAAAAQAAB9AAAAAMTXVsdGlzaWdJbmZv",
-        "AAAAAAAAAAAAAAAWcXVlcnlfbXVsdGlzaWdfbWVtYmVycwAAAAAAAAAAAAEAAAPqAAAAEw==",
-        "AAAAAAAAAAAAAAAOcXVlcnlfcHJvcG9zYWwAAAAAAAEAAAAAAAAAC3Byb3Bvc2FsX2lkAAAAAAQAAAABAAAD6AAAB9AAAAAIUHJvcG9zYWw=",
-        "AAAAAAAAAAAAAAAQcXVlcnlfc2lnbmF0dXJlcwAAAAEAAAAAAAAAC3Byb3Bvc2FsX2lkAAAAAAQAAAABAAAD6gAAA+0AAAACAAAAEwAAAAE=",
-        "AAAAAAAAAAAAAAAWcXVlcnlfbGFzdF9wcm9wb3NhbF9pZAAAAAAAAAAAAAEAAAAE",
-        "AAAAAAAAAAAAAAATcXVlcnlfYWxsX3Byb3Bvc2FscwAAAAAAAAAAAQAAA+oAAAfQAAAACFByb3Bvc2Fs",
-        "AAAABAAAAAAAAAAAAAAADUNvbnRyYWN0RXJyb3IAAAAAAAAKAAAAAAAAAAxVbmF1dGhvcml6ZWQAAAAAAAAAAAAAABJBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAAAEAAAAAAAAAFkluaXRpYWxpemVUb29Mb3dRdW9ydW0AAAAAAAIAAAAAAAAAF0luaXRpYWxpemVUb29IaWdoUXVvcnVtAAAAAAMAAAAAAAAAFlVuYXV0aG9yaXplZE5vdEFNZW1iZXIAAAAAAAQAAAAAAAAADFRpdGxlVG9vTG9uZwAAAAUAAAAAAAAAEkRlc2NyaXB0aW9uVG9vTG9uZwAAAAAABgAAAAAAAAAOUHJvcG9zYWxDbG9zZWQAAAAAAAcAAAAAAAAAEFF1b3J1bU5vdFJlYWNoZWQAAAAIAAAAAAAAABBQcm9wb3NhbE5vdEZvdW5kAAAACQ==",
-        "AAAAAQAAAAAAAAAAAAAACFByb3Bvc2FsAAAABAAAAAAAAAACaWQAAAAAAAQAAAAAAAAACHByb3Bvc2FsAAAH0AAAAAxQcm9wb3NhbFR5cGUAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAGc3RhdHVzAAAAAAfQAAAADlByb3Bvc2FsU3RhdHVzAAA=",
+        "AAAAAAAAAMVJbml0aWFsaXplIHRoZSBjb250cmFjdAptZW1iZXJzIGlzIGEgdmVjdG9yIG9mIGFkZHJlc3NlcyB0aGF0IHRoaXMgbXVsdGlzaWcgd2lsbCBjb25zaXN0IG9mCnF1b3J1bV9icHMgcmVxdWlyZXMgdG8gcGFzcyB0aGUgbWluaW11bSBhbW91bnQgb2YgcmVxdWlyZWQgc2lnbmVycyBpbiBCUFMKaWYgbm90IHByZXNlbnQsIGRlZmF1bHQgaWYgMTAwJQAAAAAAAAppbml0aWFsaXplAAAAAAAEAAAAAAAAAARuYW1lAAAAEAAAAAAAAAALZGVzY3JpcHRpb24AAAAAEAAAAAAAAAAHbWVtYmVycwAAAAPqAAAAEwAAAAAAAAAKcXVvcnVtX2JwcwAAAAAD6AAAAAQAAAABAAAD6QAAA+0AAAAAAAAH0AAAAA1Db250cmFjdEVycm9yAAAA",
+        "AAAAAAAAAAAAAAAbY3JlYXRlX3RyYW5zYWN0aW9uX3Byb3Bvc2FsAAAAAAYAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAFdGl0bGUAAAAAAAAQAAAAAAAAAAtkZXNjcmlwdGlvbgAAAAAQAAAAAAAAAAlyZWNpcGllbnQAAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAYAAAAAAAAABXRva2VuAAAAAAAAEwAAAAEAAAPpAAAD7QAAAAAAAAfQAAAADUNvbnRyYWN0RXJyb3IAAAA=",
+        "AAAAAAAAAAAAAAAWY3JlYXRlX3VwZGF0ZV9wcm9wb3NhbAAAAAAAAgAAAAAAAAAGc2VuZGVyAAAAAAATAAAAAAAAAA1uZXdfd2FzbV9oYXNoAAAAAAAD7gAAACAAAAABAAAD6QAAA+0AAAAAAAAH0AAAAA1Db250cmFjdEVycm9yAAAA",
+        "AAAAAAAAAAAAAAANc2lnbl9wcm9wb3NhbAAAAAAAAAIAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAALcHJvcG9zYWxfaWQAAAAABgAAAAEAAAPpAAAD7QAAAAAAAAfQAAAADUNvbnRyYWN0RXJyb3IAAAA=",
+        "AAAAAAAAAAAAAAAQZXhlY3V0ZV9wcm9wb3NhbAAAAAIAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAALcHJvcG9zYWxfaWQAAAAABgAAAAEAAAPpAAAD7QAAAAAAAAfQAAAADUNvbnRyYWN0RXJyb3IAAAA=",
+        "AAAAAAAAAAAAAAATcXVlcnlfbXVsdGlzaWdfaW5mbwAAAAAAAAAAAQAAA+kAAAfQAAAADE11bHRpc2lnSW5mbwAAB9AAAAANQ29udHJhY3RFcnJvcgAAAA==",
+        "AAAAAAAAAAAAAAAWcXVlcnlfbXVsdGlzaWdfbWVtYmVycwAAAAAAAAAAAAEAAAPpAAAD6gAAABMAAAfQAAAADUNvbnRyYWN0RXJyb3IAAAA=",
+        "AAAAAAAAAAAAAAAOcXVlcnlfcHJvcG9zYWwAAAAAAAEAAAAAAAAAC3Byb3Bvc2FsX2lkAAAAAAYAAAABAAAD6QAAB9AAAAAIUHJvcG9zYWwAAAfQAAAADUNvbnRyYWN0RXJyb3IAAAA=",
+        "AAAAAAAAAAAAAAAQcXVlcnlfc2lnbmF0dXJlcwAAAAEAAAAAAAAAC3Byb3Bvc2FsX2lkAAAAAAYAAAABAAAD6QAAA+oAAAPtAAAAAgAAABMAAAABAAAH0AAAAA1Db250cmFjdEVycm9yAAAA",
+        "AAAAAAAAAAAAAAAWcXVlcnlfbGFzdF9wcm9wb3NhbF9pZAAAAAAAAAAAAAEAAAPpAAAABgAAB9AAAAANQ29udHJhY3RFcnJvcgAAAA==",
+        "AAAAAAAAAAAAAAATcXVlcnlfYWxsX3Byb3Bvc2FscwAAAAAAAAAAAQAAA+kAAAPqAAAH0AAAAAhQcm9wb3NhbAAAB9AAAAANQ29udHJhY3RFcnJvcgAAAA==",
+        "AAAAAAAAAAAAAAARaXNfcHJvcG9zYWxfcmVhZHkAAAAAAAABAAAAAAAAAAtwcm9wb3NhbF9pZAAAAAAGAAAAAQAAA+kAAAABAAAH0AAAAA1Db250cmFjdEVycm9yAAAA",
+        "AAAABAAAAAAAAAAAAAAADUNvbnRyYWN0RXJyb3IAAAAAAAAMAAAAAAAAAAxVbmF1dGhvcml6ZWQAAAAAAAAAAAAAABJBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAAAEAAAAAAAAAFkluaXRpYWxpemVUb29Mb3dRdW9ydW0AAAAAAAIAAAAAAAAAF0luaXRpYWxpemVUb29IaWdoUXVvcnVtAAAAAAMAAAAAAAAAFlVuYXV0aG9yaXplZE5vdEFNZW1iZXIAAAAAAAQAAAAAAAAADFRpdGxlVG9vTG9uZwAAAAUAAAAAAAAAEkRlc2NyaXB0aW9uVG9vTG9uZwAAAAAABgAAAAAAAAAOUHJvcG9zYWxDbG9zZWQAAAAAAAcAAAAAAAAAEFF1b3J1bU5vdFJlYWNoZWQAAAAIAAAAAAAAABBQcm9wb3NhbE5vdEZvdW5kAAAACQAAAAAAAAAQTWVtYmVyc0xpc3RFbXB0eQAAAAoAAAAAAAAAE1plcm9BZGRyZXNzUHJvdmlkZWQAAAAACw==",
+        "AAAAAQAAAAAAAAAAAAAACFByb3Bvc2FsAAAABAAAAAAAAAACaWQAAAAAAAYAAAAAAAAACHByb3Bvc2FsAAAH0AAAAAxQcm9wb3NhbFR5cGUAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAGc3RhdHVzAAAAAAfQAAAADlByb3Bvc2FsU3RhdHVzAAA=",
         "AAAAAgAAAAAAAAAAAAAADFByb3Bvc2FsVHlwZQAAAAIAAAABAAAAAAAAAAtUcmFuc2FjdGlvbgAAAAABAAAH0AAAAAtUcmFuc2FjdGlvbgAAAAABAAAAAAAAAA5VcGRhdGVDb250cmFjdAAAAAAAAQAAA+4AAAAg",
         "AAAAAgAAAAAAAAAAAAAADlByb3Bvc2FsU3RhdHVzAAAAAAACAAAAAAAAAAAAAAAET3BlbgAAAAAAAAAAAAAABkNsb3NlZAAA",
         "AAAAAQAAAAAAAAAAAAAAC1RyYW5zYWN0aW9uAAAAAAUAAAAAAAAABmFtb3VudAAAAAAABgAAAAAAAAALZGVzY3JpcHRpb24AAAAAEAAAAAAAAAAJcmVjaXBpZW50AAAAAAAAEwAAAAAAAAAFdGl0bGUAAAAAAAAQAAAAAAAAAAV0b2tlbgAAAAAAABM=",
         "AAAAAQAAAAAAAAAAAAAADE11bHRpc2lnSW5mbwAAAAUAAAAAAAAAC2Rlc2NyaXB0aW9uAAAAABAAAAAAAAAAB21lbWJlcnMAAAAD6gAAABMAAAAAAAAABG5hbWUAAAAQAAAAAAAAAApxdW9ydW1fYnBzAAAAAAAEAAAAAAAAABB2ZXJzaW9uX3Byb3Bvc2FsAAAABA==",
-        "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAACAAAAAAAAAAAAAAADUlzSW5pdGlhbGl6ZWQAAAAAAAAAAAAAAAAAAA9OYW1lRGVzY3JpcHRpb24AAAAAAAAAAAAAAAAJUXVvcnVtQnBzAAAAAAAAAAAAAAAAAAAITXVsdGlzaWcAAAAAAAAAAAAAAA5MYXN0UHJvcG9zYWxJZAAAAAAAAQAAAAAAAAAIUHJvcG9zYWwAAAABAAAABAAAAAEAAAAAAAAAElByb3Bvc2FsU2lnbmF0dXJlcwAAAAAAAQAAAAQAAAAAAAAAAAAAAAdWZXJzaW9uAA==",
+        "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAACAAAAAAAAAAAAAAADUlzSW5pdGlhbGl6ZWQAAAAAAAAAAAAAAAAAAA9OYW1lRGVzY3JpcHRpb24AAAAAAAAAAAAAAAAJUXVvcnVtQnBzAAAAAAAAAAAAAAAAAAAITXVsdGlzaWcAAAAAAAAAAAAAAA5MYXN0UHJvcG9zYWxJZAAAAAAAAQAAAAAAAAAIUHJvcG9zYWwAAAABAAAABgAAAAEAAAAAAAAAElByb3Bvc2FsU2lnbmF0dXJlcwAAAAAAAQAAAAYAAAAAAAAAAAAAAAdWZXJzaW9uAA==",
       ]),
-      options,
+      options
     );
   }
-
   public readonly fromJSON = {
-    initialize: this.txFromJSON<null>,
-    create_transaction_proposal: this.txFromJSON<null>,
-    create_update_proposal: this.txFromJSON<null>,
-    sign_proposal: this.txFromJSON<null>,
-    execute_proposal: this.txFromJSON<null>,
-    remove_proposal: this.txFromJSON<null>,
-    query_multisig_info: this.txFromJSON<MultisigInfo>,
-    query_multisig_members: this.txFromJSON<Array<string>>,
-    query_proposal: this.txFromJSON<Option<Proposal>>,
-    query_signatures: this.txFromJSON<Array<readonly [string, boolean]>>,
-    query_last_proposal_id: this.txFromJSON<u32>,
-    query_all_proposals: this.txFromJSON<Array<Proposal>>,
+    initialize: this.txFromJSON<Result<void>>,
+    create_transaction_proposal: this.txFromJSON<Result<void>>,
+    create_update_proposal: this.txFromJSON<Result<void>>,
+    sign_proposal: this.txFromJSON<Result<void>>,
+    execute_proposal: this.txFromJSON<Result<void>>,
+    query_multisig_info: this.txFromJSON<Result<MultisigInfo>>,
+    query_multisig_members: this.txFromJSON<Result<Array<string>>>,
+    query_proposal: this.txFromJSON<Result<Proposal>>,
+    query_signatures: this.txFromJSON<
+      Result<Array<readonly [string, boolean]>>
+    >,
+    query_last_proposal_id: this.txFromJSON<Result<u64>>,
+    query_all_proposals: this.txFromJSON<Result<Array<Proposal>>>,
+    is_proposal_ready: this.txFromJSON<Result<boolean>>,
   };
 }
