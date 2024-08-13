@@ -59,27 +59,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
     const sigInfo = await _msig;
     setInfo(sigInfo.info);
     setMembers(sigInfo.members);
-
-    // Here comes the tricky part, as we can't iterate through proposals on that msig
-    // Need to fetch the latest ID. If the latest ID is 0, there are non proposals.
-    // If it's higher then 0, we need to query each proposal from the multisig
-    const msigClient = new MultisigContract.Client({
-      contractId: params.multisigId,
-      rpcUrl: RPC_URL,
-      networkPassphrase: NETWORK_PASSPHRASE,
-    });
-
-    // Query latest
-    const latestProposal = (await msigClient.query_last_proposal_id()).result;
-
-    // If there are no proposals
-    if (latestProposal == 0) {
-      return;
-    }
-
-    const _proposals = (await msigClient.query_all_proposals()).result;
-
-    setProposals(_proposals);
+    setProposals(sigInfo.proposals);
   };
   useEffect(() => {
     init();

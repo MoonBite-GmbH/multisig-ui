@@ -10,14 +10,17 @@ export const useMultisig = async (multisigId: string) => {
   });
 
   // Query multisig Info
-  const info = (await multisigContract.query_multisig_info()).result;
+  const info = (await multisigContract.query_multisig_info()).result.unwrap();
 
   // Query multisig members
-  const members = (await multisigContract.query_multisig_members()).result;
+  const members = (await multisigContract.query_multisig_members()).result.unwrap();
+
+  const proposals = (await multisigContract.query_all_proposals()).result.unwrap();
 
   return {
     info,
     members,
+    proposals
   };
 };
 
@@ -34,10 +37,10 @@ export const useUserMultisigs = async () => {
     });
 
     // Query multisig Info
-    const info = (await multisigContract.query_multisig_info()).result;
+    const info = (await multisigContract.query_multisig_info()).result.unwrap();
 
     // Query multisig members
-    const members = (await multisigContract.query_multisig_members()).result;
+    const members = (await multisigContract.query_multisig_members()).result.unwrap();
 
     return {
       info,
