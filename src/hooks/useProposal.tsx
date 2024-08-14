@@ -14,7 +14,5 @@ export const useProposal = async (multisigId: string, proposalId: string) => {
     proposal_id: BigInt(proposalId)
   })).result.unwrap();
 
-  return {
-    info,
-  };
+  return info;
 };
