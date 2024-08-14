@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/Button";
 import { useProposal } from "@/hooks/useProposal";
+import { Proposal } from "@/lib/contract";
 import { signProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { usePersistStore } from "@/state/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ProposalPageParams {
   readonly params: {
@@ -17,11 +18,34 @@ interface ProposalPageParams {
 const ProposalPage = ({ params }: ProposalPageParams) => {
   const appStore = usePersistStore();
 
-  const _proposal = useProposal(params.multisigId, params.proposalId);
+  const [id, setId] = useState<number>(0);
+  const [type, setType] = useState<string>("");
+  const [sender, setSender] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [proposal, setProposal] = useState<{amount: number, description: string, recipient: string, title: string, token: string} | undefined>(undefined)
+
+  const _proposalInfo = useProposal(params.multisigId, params.proposalId);
 
   const init = async () => {
-    const proposal = await _proposal;
-    console.log(proposal)
+    const proposalInfo = await _proposalInfo;
+    
+    setId(Number(proposalInfo.id));
+    setType(proposalInfo.proposal.tag);
+    setSender(proposalInfo.sender);
+    setStatus(proposalInfo.status.tag);
+
+    setProposal({
+      //@ts-ignore
+      amount: Number(proposalInfo.proposal.values[0].amount),
+      //@ts-ignore
+      description: proposalInfo.proposal.values[0].description,
+      //@ts-ignore
+      recipient: proposalInfo.proposal.values[0].recipient,
+      //@ts-ignore
+      title: proposalInfo.proposal.values[0].title,
+      //@ts-ignore
+      token: proposalInfo.proposal.values[0].token,
+    });
   };
 
   useEffect(() => {
@@ -40,6 +64,18 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
 
       console.log(result)
     }}>Sign</Button>
+    {proposal && (
+      <>
+      <div>ID: {id}</div>
+      <div>Type: {type}</div>
+      <div>Sender: {sender}</div>
+      <div>Status: {status}</div>
+      <div>Amount: {proposal.amount}</div>
+      <div>Title: {proposal.title}</div>
+      <div>Description: {proposal.description}</div>
+      <div>Token: {proposal.token}</div>
+      </>
+    )}
     </>
   );
 };
