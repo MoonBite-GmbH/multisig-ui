@@ -56,3 +56,33 @@ export const deployMultisigContract = async (
     console.error(error);
   }
 };
+
+export const getUserMultisigs = async (walletAddress: string) => {
+  const response = await fetch(`/api/${walletAddress}`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return await response.json();
+}
+
+export const setUserMultisig = async (multisigId: string, members: string[]) => {
+  const response = await fetch('/api/multisig/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ multisigId, members }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return await response.json();
+}
