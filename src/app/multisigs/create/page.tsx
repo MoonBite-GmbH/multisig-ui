@@ -23,7 +23,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { usePersistStore } from "@/state/store";
 import { useToast } from "@/components/ui/useToast";
-import { deployMultisigContract } from "@/lib/deploy";
+import { deployMultisigContract, setUserMultisig } from "@/lib/deploy";
 import { xBull } from "@/lib/wallets/xbull";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
@@ -100,6 +100,8 @@ const CreateMultisigPage: NextPage = () => {
         },
       );
       if (result) {
+        setUserMultisig(result, memberAddresses);
+
         toast({
           className: cn(
             "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
