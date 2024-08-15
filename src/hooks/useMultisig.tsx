@@ -23,31 +23,3 @@ export const useMultisig = async (multisigId: string) => {
     proposals
   };
 };
-
-export const useUserMultisigs = async () => {
-  // TODO: Fetch multisigs from the api, for now we will use this hardcoded list
-  const addresses = MULTISIGS;
-
-  const results = addresses.map(async (address) => {
-    // Instantiate Msig class
-    const multisigContract = new MultisigContract.Client({
-      contractId: address,
-      rpcUrl: RPC_URL,
-      networkPassphrase: NETWORK_PASSPHRASE,
-    });
-
-    // Query multisig Info
-    const info = (await multisigContract.query_multisig_info()).result.unwrap();
-
-    // Query multisig members
-    const members = (await multisigContract.query_multisig_members()).result.unwrap();
-
-    return {
-      info,
-      members,
-      address: address,
-    };
-  });
-
-  return await Promise.all(results);
-};

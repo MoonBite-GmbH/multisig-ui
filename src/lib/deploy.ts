@@ -1,5 +1,6 @@
 import { Wallet } from "@/lib/wallets/types";
 import * as DeployContract from "./deploy_contract";
+import * as MultisigContract from "../lib/contract";
 import {
   DEPLOY_CONTRACT_ID,
   NETWORK_PASSPHRASE,
@@ -67,7 +68,32 @@ export const getUserMultisigs = async (walletAddress: string) => {
     throw new Error(error.message);
   }
 
-  return await response.json();
+  const multisigs = await response.json();
+
+  const results = multisigs.map(async (entry: any) => {
+    const address = entry.id;
+
+    // Instantiate Msig class
+    const multisigContract = new MultisigContract.Client({
+      contractId: address,
+      rpcUrl: RPC_URL,
+      networkPassphrase: NETWORK_PASSPHRASE,
+    });
+
+    // Query multisig Info
+    const info = (await multisigContract.query_multisig_info()).result.unwrap();
+
+    // Query multisig members
+    const members = (await multisigContract.query_multisig_members()).result.unwrap();
+
+    return {
+      info,
+      members,
+      address: address,
+    };
+  });
+
+  return await Promise.all(results);
 }
 
 export const setUserMultisig = async (multisigId: string, members: string[]) => {
