@@ -86,9 +86,12 @@ export const getUserMultisigs = async (walletAddress: string) => {
     // Query multisig members
     const members = (await multisigContract.query_multisig_members()).result.unwrap();
 
+    const proposals = (await multisigContract.query_all_proposals()).result.unwrap();
+
     return {
       info,
       members,
+      proposals,
       address: address,
     };
   });
