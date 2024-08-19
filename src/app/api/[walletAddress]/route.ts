@@ -8,12 +8,10 @@ export async function GET(req: NextRequest, { params }: { params: { walletAddres
     return NextResponse.json({ error: 'Wallet Address is required' }, { status: 400 });
   }
 
-  console.log(walletAddress)
-
   try {
     const result = await sql`
       SELECT * FROM multisigs
-      WHERE ${walletAddress} = ANY(members);
+      WHERE members @> ARRAY[${walletAddress}];
     `;
     
     if (result.rowCount === 0) {
