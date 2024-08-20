@@ -65,8 +65,6 @@ export default function Home() {
       });
     });
 
-    console.log(_proposalEntries);
-
     setProposalEntries(_proposalEntries);
   }, [multisigEntries]);
 
