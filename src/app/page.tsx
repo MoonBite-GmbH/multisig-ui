@@ -133,7 +133,7 @@ export default function Home() {
                 {store.wallet.address &&
                   proposalEntries &&
                   proposalEntries.map((proposal: any, index: number) => (
-                    <TableRow
+                    proposal.status.tag === "Open" && <TableRow
                       key={index}
                       onClick={() => {
                         router.push(
