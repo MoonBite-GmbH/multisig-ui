@@ -68,6 +68,14 @@ export default function Home() {
     setProposalEntries(_proposalEntries);
   }, [multisigEntries]);
 
+  const hasUserSinged = (signatures: any[]) => {
+    const foundSignature = signatures.find(signature => signature[0] === store.wallet.address);
+    
+    if(foundSignature && foundSignature[1]) {
+      return <VoteIcon />;
+    }
+  }
+
   return (
     <>
       <div className="px-8 mb-8">
@@ -141,11 +149,7 @@ export default function Home() {
                         {proposal.proposal.values[0].description}
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        {proposal.signatures.map(
-                          (signature: any[], index: number) =>
-                            signature[0] === store.wallet.address &&
-                            signature[1] && <VoteIcon key={index} />
-                        )}
+                        {hasUserSinged(proposal.signatures)}
                       </TableCell>
                     </TableRow>
                   ))}
