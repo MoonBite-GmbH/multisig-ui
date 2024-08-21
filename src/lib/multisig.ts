@@ -77,3 +77,31 @@ export const signProposal = async (
     console.error(error);
   }
 };
+
+export const executeProposal = async (
+  wallet: Wallet,
+  userPublicKey: string,
+  contractId: string,
+  proposalId: string,
+) => {
+  // Create Client
+  const client = new MultisigContract.Client({
+    publicKey: userPublicKey,
+    signTransaction: (tx: string) => wallet.signTransaction(tx),
+    contractId: contractId,
+    networkPassphrase: NETWORK_PASSPHRASE,
+    rpcUrl: RPC_URL,
+  });
+
+  try {
+    const tx = await client.execute_proposal({
+      sender: userPublicKey,
+      proposal_id: BigInt(proposalId)
+    });
+
+    const res = await tx.signAndSend();
+    return res.result.unwrap();
+  } catch (error) {
+    console.error(error);
+  }
+};

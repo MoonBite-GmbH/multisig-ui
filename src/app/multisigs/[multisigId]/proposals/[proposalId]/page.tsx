@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { useProposal } from "@/hooks/useProposal";
 import { Proposal } from "@/lib/contract";
-import { signProposal } from "@/lib/multisig";
+import { executeProposal, signProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { usePersistStore } from "@/state/store";
 import { useEffect, useState } from "react";
@@ -22,29 +22,45 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
   const [type, setType] = useState<string>("");
   const [sender, setSender] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-  const [proposal, setProposal] = useState<{amount: number, description: string, recipient: string, title: string, token: string} | undefined>(undefined)
+  const [proposal, setProposal] = useState<
+    | {
+        amount: number;
+        description: string;
+        recipient: string;
+        title: string;
+        token: string;
+      }
+    | undefined
+  >(undefined);
+  const [signatures, setSignatures] = useState<any[]>([]);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const _proposalInfo = useProposal(params.multisigId, params.proposalId);
 
   const init = async () => {
-    const proposalInfo = await _proposalInfo;
-    
-    setId(Number(proposalInfo.id));
-    setType(proposalInfo.proposal.tag);
-    setSender(proposalInfo.sender);
-    setStatus(proposalInfo.status.tag);
+    const { info, signatures, isReady } = await _proposalInfo;
+
+    console.log(isReady)
+
+    setId(Number(info.id));
+    setType(info.proposal.tag);
+    setSender(info.sender);
+    setStatus(info.status.tag);
+
+    setSignatures(signatures);
+    setIsReady(isReady);
 
     setProposal({
       //@ts-ignore
-      amount: Number(proposalInfo.proposal.values[0].amount),
+      amount: Number(info.proposal.values[0].amount),
       //@ts-ignore
-      description: proposalInfo.proposal.values[0].description,
+      description: info.proposal.values[0].description,
       //@ts-ignore
-      recipient: proposalInfo.proposal.values[0].recipient,
+      recipient: info.proposal.values[0].recipient,
       //@ts-ignore
-      title: proposalInfo.proposal.values[0].title,
+      title: info.proposal.values[0].title,
       //@ts-ignore
-      token: proposalInfo.proposal.values[0].token,
+      token: info.proposal.values[0].token,
     });
   };
 
@@ -54,28 +70,48 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
 
   return (
     <>
-    <Button onClick={async () => {
-      const result = await signProposal(
-        new xBull(),
-        appStore.wallet.address!,
-        params.multisigId,
-        params.proposalId
-      );
+      <Button
+        onClick={async () => {
+          const result = await signProposal(
+            new xBull(),
+            appStore.wallet.address!,
+            params.multisigId,
+            params.proposalId
+          );
 
-      console.log(result)
-    }}>Sign</Button>
-    {proposal && (
-      <>
-      <div>ID: {id}</div>
-      <div>Type: {type}</div>
-      <div>Sender: {sender}</div>
-      <div>Status: {status}</div>
-      <div>Amount: {proposal.amount}</div>
-      <div>Title: {proposal.title}</div>
-      <div>Description: {proposal.description}</div>
-      <div>Token: {proposal.token}</div>
-      </>
-    )}
+          console.log(result);
+        }}
+      >
+        Sign
+      </Button>
+      {isReady && (
+        <Button
+          onClick={async () => {
+            const result = await executeProposal(
+              new xBull(),
+              appStore.wallet.address!,
+              params.multisigId,
+              params.proposalId
+            );
+
+            console.log(result);
+          }}
+        >
+          Execute Proposal
+        </Button>
+      )}
+      {proposal && (
+        <>
+          <div>ID: {id}</div>
+          <div>Type: {type}</div>
+          <div>Sender: {sender}</div>
+          <div>Status: {status}</div>
+          <div>Amount: {proposal.amount}</div>
+          <div>Title: {proposal.title}</div>
+          <div>Description: {proposal.description}</div>
+          <div>Token: {proposal.token}</div>
+        </>
+      )}
     </>
   );
 };
