@@ -14,5 +14,17 @@ export const useProposal = async (multisigId: string, proposalId: string) => {
     proposal_id: BigInt(proposalId)
   })).result.unwrap();
 
-  return info;
+  const signatures = (await multisigContract.query_signatures({
+    proposal_id: BigInt(proposalId)
+  })).result.unwrap();
+
+  const isReady = (await multisigContract.is_proposal_ready({
+    proposal_id: BigInt(proposalId)
+  })).result.unwrap();
+
+  return {
+    info,
+    signatures,
+    isReady
+  };
 };
