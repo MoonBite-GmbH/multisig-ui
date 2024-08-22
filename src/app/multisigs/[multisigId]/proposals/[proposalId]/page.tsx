@@ -2,12 +2,14 @@
 
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Separator } from "@/components/ui/Separator";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
 import { useProposal } from "@/hooks/useProposal";
 import { Proposal } from "@/lib/contract";
 import { executeProposal, signProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { usePersistStore } from "@/state/store";
-import { VoteIcon } from "lucide-react";
+import { Check, Cross, VoteIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ProposalPageParams {
@@ -42,7 +44,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
   const init = async () => {
     const { info, signatures, isReady } = await _proposalInfo;
 
-    console.log(info)
+    console.log(info);
 
     setId(Number(info.id));
     setType(info.proposal.tag);
@@ -82,15 +84,32 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
 
   return (
     <>
-      <div className="grid grid-cols-12 gap-4">
+      <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 md:col-span-6 lg:col-span-8">
           <h1 className="text-2xl font-semibold mb-4">{proposal?.title}</h1>
-          <h2 className="text-xl font-semibold mb-4">
-            {proposal?.description}
-          </h2>
-        </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-4">
-          <div className="flex w-full justify-start md:justify-end mb-4">
+          <h2 className="text-xl mb-8">{proposal?.description}</h2>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Turnout</h3>
+
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">All Votes</h3>
+            <Table className="mb-8">
+              <TableBody>
+                {signatures?.map((signature: any, index: number) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      {signature[0]}
+                    </TableCell>
+                    <TableCell>
+                      {signature[0] ? <Check width={16}/> : <Cross width={16}/>}
+                    </TableCell>
+                </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="flex">
             <Button
               variant="outline"
               className="mr-2"
@@ -125,13 +144,13 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               </Button>
             )}
           </div>
-          <Card>
+        </div>
+        <div className="col-span-12 md:col-span-6 lg:col-span-4">
+          <Card className="mb-6">
             <CardHeader className="border-b pb-3 pt-3 px-0">
               <div className="grid grid-cols-3 divide-x">
                 <div>
-                  <p className="flex justify-center mb-2 text-sm">
-                    ID
-                  </p>
+                  <p className="flex justify-center mb-2 text-sm">ID</p>
                   <p className="flex justify-center">#{id}</p>
                 </div>
                 <div>
@@ -151,23 +170,22 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                 <p className="mb-2 text-sm">Proposer</p>
                 <p className="">{`${sender.slice(0, 4)}...${sender.slice(-4)}`}</p>
               </div>
+              <div className="mb-4">
+                <p className="mb-2 text-sm">Type</p>
+                <p className="">{type}</p>
+              </div>
+              <div className="mb-4">
+                <p className="mb-2 text-sm">Amount</p>
+                <p className="">{proposal?.amount}</p>
+              </div>
+              <div>
+                <p className="mb-2 text-sm">Token</p>
+                <p className="">{`${proposal?.token.slice(0, 4)}...${proposal?.token.slice(-4)}`}</p>
+              </div>
             </CardContent>
           </Card>
         </div>
       </div>
-
-      {proposal && (
-        <>
-          <div>ID: {id}</div>
-          <div>Type: {type}</div>
-          <div>Sender: {sender}</div>
-          <div>Status: {status}</div>
-          <div>Amount: {proposal.amount}</div>
-          <div>Title: {proposal.title}</div>
-          <div>Description: {proposal.description}</div>
-          <div>Token: {proposal.token}</div>
-        </>
-      )}
     </>
   );
 };
