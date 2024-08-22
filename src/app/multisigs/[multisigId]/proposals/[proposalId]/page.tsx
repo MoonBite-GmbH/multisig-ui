@@ -1,11 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { useProposal } from "@/hooks/useProposal";
 import { Proposal } from "@/lib/contract";
 import { executeProposal, signProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { usePersistStore } from "@/state/store";
+import { VoteIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ProposalPageParams {
@@ -40,7 +42,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
   const init = async () => {
     const { info, signatures, isReady } = await _proposalInfo;
 
-    console.log(isReady)
+    console.log(info)
 
     setId(Number(info.id));
     setType(info.proposal.tag);
@@ -68,38 +70,92 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
     init();
   }, []);
 
+  const hasUserSinged = (signatures: any[]) => {
+    const foundSignature = signatures.find(
+      (signature) => signature[0] === appStore.wallet.address
+    );
+
+    if (foundSignature && foundSignature[1]) {
+      return <VoteIcon />;
+    }
+  };
+
   return (
     <>
-      <Button
-        onClick={async () => {
-          const result = await signProposal(
-            new xBull(),
-            appStore.wallet.address!,
-            params.multisigId,
-            params.proposalId
-          );
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 md:col-span-6 lg:col-span-8">
+          <h1 className="text-2xl font-semibold mb-4">{proposal?.title}</h1>
+          <h2 className="text-xl font-semibold mb-4">
+            {proposal?.description}
+          </h2>
+        </div>
+        <div className="col-span-12 md:col-span-6 lg:col-span-4">
+          <div className="flex w-full justify-start md:justify-end mb-4">
+            <Button
+              variant="outline"
+              className="mr-2"
+              onClick={async () => {
+                const result = await signProposal(
+                  new xBull(),
+                  appStore.wallet.address!,
+                  params.multisigId,
+                  params.proposalId
+                );
 
-          console.log(result);
-        }}
-      >
-        Sign
-      </Button>
-      {isReady && (
-        <Button
-          onClick={async () => {
-            const result = await executeProposal(
-              new xBull(),
-              appStore.wallet.address!,
-              params.multisigId,
-              params.proposalId
-            );
+                console.log(result);
+              }}
+            >
+              Sign
+            </Button>
+            {isReady && (
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  const result = await executeProposal(
+                    new xBull(),
+                    appStore.wallet.address!,
+                    params.multisigId,
+                    params.proposalId
+                  );
 
-            console.log(result);
-          }}
-        >
-          Execute Proposal
-        </Button>
-      )}
+                  console.log(result);
+                }}
+              >
+                Execute
+              </Button>
+            )}
+          </div>
+          <Card>
+            <CardHeader className="border-b pb-3 pt-3 px-0">
+              <div className="grid grid-cols-3 divide-x">
+                <div>
+                  <p className="flex justify-center mb-2 text-sm">
+                    ID
+                  </p>
+                  <p className="flex justify-center">#{id}</p>
+                </div>
+                <div>
+                  <p className="flex justify-center mb-2 text-sm">Status</p>
+                  <p className="flex justify-center">{status}</p>
+                </div>
+                <div>
+                  <p className="flex justify-center mb-2 text-sm">Your Vote</p>
+                  <p className="flex justify-center">
+                    {hasUserSinged(signatures)}
+                  </p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <div className="mb-4">
+                <p className="mb-2 text-sm">Proposer</p>
+                <p className="">{`${sender.slice(0, 4)}...${sender.slice(-4)}`}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {proposal && (
         <>
           <div>ID: {id}</div>
