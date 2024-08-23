@@ -123,7 +123,7 @@ export default function Home() {
               <TableCaption>A list of your unvoted proposals.</TableCaption>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">Multisig</TableHead>
+                  <TableHead className="">Multisig</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead className="text-right">Vote</TableHead>
@@ -154,12 +154,6 @@ export default function Home() {
                     </TableRow>
                   ))}
               </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={3}>Total Unvoted</TableCell>
-                  <TableCell className="text-right">1</TableCell>
-                </TableRow>
-              </TableFooter>
             </Table>
           </CardContent>
         </Card>

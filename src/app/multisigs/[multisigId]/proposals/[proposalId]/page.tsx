@@ -38,7 +38,7 @@ const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
     <div className="flex flex-col items-center">
       <div className="flex justify-around w-full text-center mb-2">
         <div className="text-green-500 text-xs">Yes: {yesVotes}</div>
-        <div className="text-gray-500 text-xs">Passing threshold: {quorumPercentage}%</div>
+        <div className="text-muted-foreground text-xs">Passing threshold: {quorumPercentage}%</div>
         <div className="text-red-500 text-xs">No: {noVotes}</div>
       </div>
       <div className="w-full bg-gray-600 rounded-full h-3 flex relative">
@@ -131,7 +131,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 md:col-span-6 lg:col-span-8">
           <h1 className="text-2xl font-semibold mb-4">{proposal?.title}</h1>
-          <h2 className="text-xl mb-8">{proposal?.description}</h2>
+          <h2 className="text-xl mb-8 text-muted-foreground">{proposal?.description}</h2>
           <div className="mb-8">
             <h3 className="text-lg font-semibold mb-3">Turnout</h3>
             <Votes
@@ -248,19 +248,19 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             <CardHeader className="border-b pb-3 pt-3 px-0">
               <div className="grid grid-cols-3 divide-x">
                 <div>
-                  <p className="flex justify-center mb-2 text-sm text-gray-500">
+                  <p className="flex justify-center mb-2 text-sm text-muted-foreground">
                     ID
                   </p>
                   <p className="flex justify-center">#{id}</p>
                 </div>
                 <div>
-                  <p className="flex justify-center mb-2 text-sm text-gray-500">
+                  <p className="flex justify-center mb-2 text-sm text-muted-foreground">
                     Status
                   </p>
                   <p className="flex justify-center">{status}</p>
                 </div>
                 <div>
-                  <p className="flex justify-center mb-2 text-sm text-gray-500">
+                  <p className="flex justify-center mb-2 text-sm text-muted-foreground">
                     Your Vote
                   </p>
                   <p className="flex justify-center">
@@ -271,7 +271,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             </CardHeader>
             <CardContent className="pt-4">
               <div className="mb-4">
-                <p className="mb-2 text-sm text-gray-500">Proposer</p>
+                <p className="mb-2 text-sm text-muted-foreground">Proposer</p>
                 <p className="mb-2 hover:underline">
                   <Link
                     target="__blank"
@@ -283,17 +283,17 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                 <Separator />
               </div>
               <div className="mb-4">
-                <p className="mb-2 text-sm text-gray-500">Type</p>
+                <p className="mb-2 text-sm text-muted-foreground">Type</p>
                 <p className="mb-2">{type}</p>
                 <Separator />
               </div>
               <div className="mb-4">
-                <p className="mb-2 text-sm text-gray-500">Amount</p>
+                <p className="mb-2 text-sm text-muted-foreground">Amount</p>
                 <p className="mb-2">{proposal?.amount}</p>
                 <Separator />
               </div>
               <div>
-                <p className="mb-2 text-sm text-gray-500">Token</p>
+                <p className="mb-2 text-sm text-muted-foreground">Token</p>
                 <p className="hover:underline">
                   <Link
                     target="__blank"

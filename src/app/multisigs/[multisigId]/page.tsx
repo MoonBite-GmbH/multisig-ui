@@ -79,7 +79,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
         <div>
           <div className="mx-auto">
             <h1 className="text-2xl font-semibold mb-4">{info.name}</h1>
-            <h2 className="text-xl mb-8">{info.description}</h2>
+            <h2 className="text-xl mb-8 text-muted-foreground">{info.description}</h2>
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-3">Members</h3>
               {members.map((member, index) => (
