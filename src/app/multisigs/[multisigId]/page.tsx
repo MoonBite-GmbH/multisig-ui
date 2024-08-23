@@ -6,7 +6,15 @@ import { Proposal } from "@/lib/contract";
 import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
+import Link from "next/link";
 
 interface MultisigPageParams {
   readonly params: {
@@ -57,6 +65,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
 
   const init = async () => {
     const sigInfo = await _msig;
+    console.log(sigInfo);
     setInfo(sigInfo.info);
     setMembers(sigInfo.members);
     setProposals(sigInfo.proposals);
@@ -69,12 +78,24 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
       {info && (
         <div>
           <div className="mx-auto">
-            <div className="space-y-2">
-              <h1>Multisig {info.name}</h1>
-              <p>{info.description}</p>
-              <div>{members.map((member, index) => (
-                <div key={index}>{member}</div>
-              ))}</div>
+            <h1 className="text-2xl font-semibold mb-4">{info.name}</h1>
+            <h2 className="text-xl mb-8">{info.description}</h2>
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold">Members</h3>
+              {members.map((member, index) => (
+                <p key={index} className="mb-2 truncate">
+                  <Link
+                    target="__blank"
+                    className="text-sm hover:underline"
+                    href={`https://stellar.expert/explorer/public/account/${member}`}
+                  >
+                    {member}
+                  </Link>
+                </p>
+              ))}
+            </div>
+            <div className="flex justify-between mb-4">
+              <h3 className="text-lg font-semibold">Proposals</h3>
               <Button
                 onClick={() => {
                   router.push(
@@ -84,53 +105,55 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
               >
                 Create Proposal
               </Button>
-              <h1 className="text-2xl font-semibold mb-4">Proposals</h1>
-              <div className="overflow-x-auto xl:block hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Proposal ID</TableHead>
-                      <TableHead className="w-[100px]">Sender</TableHead>
-                      <TableHead className="w-[200px]">Type</TableHead>
-                      <TableHead className="w-[200px]">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {proposals.map((entry, index) => (
-                      <TableRow
-                        key={index}
-                        onClick={() => {
-                          router.push(`/multisigs/${params.multisigId}/proposals/${entry.id}`);
-                        }}
-                      >
-                        <TableCell>{Number(entry.id)}</TableCell>
-                        <TableCell>{entry.sender}</TableCell>
-                        <TableCell>{entry.proposal.tag}</TableCell>
-                        <TableCell
-                          className={`text-sm ${entry.status.tag === "Open" ? "text-green-700" : "text-orange-700"}`}
-                        >
-                          {entry.status.tag}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="block xl:hidden">
-                {proposals.map((entry, index) => (
-                  <div key={index} className="mb-1 p-3 border rounded">
-                    <div className="flex justify-between mb-4">
-                      <p className="text-sm font-bold">{Number(entry.id)}</p>
-                      <p className="text-sm">{entry.proposal.tag}</p>
-                      <p
+            </div>
+            <div className="overflow-x-auto xl:block hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Proposal ID</TableHead>
+                    <TableHead className="w-[100px]">Sender</TableHead>
+                    <TableHead className="w-[200px]">Type</TableHead>
+                    <TableHead className="w-[200px]">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {proposals.map((entry, index) => (
+                    <TableRow
+                      key={index}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        router.push(
+                          `/multisigs/${params.multisigId}/proposals/${entry.id}`
+                        );
+                      }}
+                    >
+                      <TableCell>{Number(entry.id)}</TableCell>
+                      <TableCell>{entry.sender}</TableCell>
+                      <TableCell>{entry.proposal.tag}</TableCell>
+                      <TableCell
                         className={`text-sm ${entry.status.tag === "Open" ? "text-green-700" : "text-orange-700"}`}
                       >
                         {entry.status.tag}
-                      </p>
-                    </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="block xl:hidden">
+              {proposals.map((entry, index) => (
+                <div key={index} className="mb-1 p-3 border rounded">
+                  <div className="flex justify-between mb-4">
+                    <p className="text-sm font-bold">{Number(entry.id)}</p>
+                    <p className="text-sm">{entry.proposal.tag}</p>
+                    <p
+                      className={`text-sm ${entry.status.tag === "Open" ? "text-green-700" : "text-orange-700"}`}
+                    >
+                      {entry.status.tag}
+                    </p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
