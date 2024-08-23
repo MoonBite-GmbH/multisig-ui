@@ -207,7 +207,6 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             </Button>
             {isReady && (
               <Button
-                variant="outline"
                 onClick={async () => {
                   try {
                     const result = await executeProposal(
