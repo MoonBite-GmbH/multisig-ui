@@ -38,7 +38,7 @@ const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
     <div className="flex flex-col items-center">
       <div className="flex justify-around w-full text-center mb-2">
         <div className="text-green-500 text-xs">Yes: {yesVotes}</div>
-        <div className="text-gray-500 text-xs">Quorum: {quorumPercentage}%</div>
+        <div className="text-gray-500 text-xs">Passing threshold: {quorumPercentage}%</div>
         <div className="text-red-500 text-xs">No: {noVotes}</div>
       </div>
       <div className="w-full bg-gray-600 rounded-full h-3 flex relative">
@@ -132,8 +132,8 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
         <div className="col-span-12 md:col-span-6 lg:col-span-8">
           <h1 className="text-2xl font-semibold mb-4">{proposal?.title}</h1>
           <h2 className="text-xl mb-8">{proposal?.description}</h2>
-          <div>
-            <h3 className="text-lg font-semibold mb-6">Turnout</h3>
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-3">Turnout</h3>
             <Votes
               yesVotes={signatures.filter(([address, signed]) => signed).length}
               noVotes={signatures.filter(([address, signed]) => !signed).length}
@@ -141,7 +141,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             />
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 mt-8">All Votes</h3>
+            <h3 className="text-lg font-semibold mb-3">All Votes</h3>
             <Table className="mb-8">
               <TableBody>
                 {signatures?.map((signature: any, index: number) => (

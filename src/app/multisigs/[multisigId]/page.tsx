@@ -81,7 +81,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
             <h1 className="text-2xl font-semibold mb-4">{info.name}</h1>
             <h2 className="text-xl mb-8">{info.description}</h2>
             <div className="mb-8">
-              <h3 className="text-lg font-semibold">Members</h3>
+              <h3 className="text-lg font-semibold mb-3">Members</h3>
               {members.map((member, index) => (
                 <p key={index} className="mb-2 truncate">
                   <Link
@@ -94,7 +94,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                 </p>
               ))}
             </div>
-            <div className="flex justify-between mb-4">
+            <div className="flex justify-between mb-3">
               <h3 className="text-lg font-semibold">Proposals</h3>
               <Button
                 onClick={() => {

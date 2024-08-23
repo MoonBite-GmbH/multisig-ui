@@ -78,6 +78,8 @@ export default function Home() {
 
   return (
     <>
+      <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
+      <h3 className="text-lg font-semibold mb-4">Multisigs</h3>
       <div className="px-8 mb-8">
         <Carousel
           opts={{
@@ -114,10 +116,8 @@ export default function Home() {
       </div>
 
       <div className="col-span-1 md:col-span-6">
+        <h3 className="text-lg font-semibold mb-4">Open Proposals</h3>
         <Card>
-          <CardHeader>
-            <CardTitle>New Proposals</CardTitle>
-          </CardHeader>
           <CardContent>
             <Table>
               <TableCaption>A list of your unvoted proposals.</TableCaption>

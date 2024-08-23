@@ -36,8 +36,8 @@ export default function MultisigsPage() {
 
   return (
     <>
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-semibold mb-4">Multisigs</h1>
+      <div className="flex justify-between mb-4">
+        <h1 className="text-2xl font-semibold">Multisigs</h1>
         <Button
           onClick={() => {
             router.push("/multisigs/create");
