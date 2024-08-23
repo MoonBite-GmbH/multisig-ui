@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Separator } from "@/components/ui/Separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import { useMultisig } from "@/hooks/useMultisig";
 import { useProposal } from "@/hooks/useProposal";
 import { Proposal } from "@/lib/contract";
 import { executeProposal, signProposal } from "@/lib/multisig";
@@ -18,6 +19,41 @@ interface ProposalPageParams {
     readonly proposalId: string;
   };
 }
+
+interface VotesProps {
+  yesVotes: number;
+  noVotes: number;
+  quorum: number;
+}
+
+const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
+  const totalVotes = yesVotes + noVotes;
+  const yesPercentage = (yesVotes / totalVotes) * 100;
+  const quorumPercentage = quorum / 1000;
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="flex justify-around w-full text-center mb-2">
+        <div className="text-green-500 text-xs">Yes: {yesVotes}</div>
+        <div className="text-gray-500 text-xs">No: {noVotes}</div>
+      </div>
+      <div className="w-full bg-gray-600 rounded-full h-3 flex relative">
+        <div
+          className="bg-green-500 h-full rounded-l-lg"
+          style={{ width: `${yesPercentage}%` }}
+        ></div>
+        <div
+          className="absolute w-1 rounded-sm bg-gray-200"
+          style={{
+            left: `${quorumPercentage}%`,
+            top: '-4px', // Overlaps 3px above the progress bar
+            bottom: '-4px', // Overlaps 3px below the progress bar
+          }}
+        ></div>
+      </div>
+    </div>
+  );
+};
 
 const ProposalPage = ({ params }: ProposalPageParams) => {
   const appStore = usePersistStore();
@@ -38,13 +74,16 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
   >(undefined);
   const [signatures, setSignatures] = useState<any[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
+  const [quorum, setQuorum] = useState<number>(0);
 
   const _proposalInfo = useProposal(params.multisigId, params.proposalId);
+  const _multisigInfo = useMultisig(params.multisigId);
 
   const init = async () => {
+    const multisig = await _multisigInfo;
     const { info, signatures, isReady } = await _proposalInfo;
 
-    console.log(info);
+    setQuorum(multisig.info.quorum_bps);
 
     setId(Number(info.id));
     setType(info.proposal.tag);
@@ -89,11 +128,11 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
           <h1 className="text-2xl font-semibold mb-4">{proposal?.title}</h1>
           <h2 className="text-xl mb-8">{proposal?.description}</h2>
           <div>
-            <h3 className="text-lg font-semibold mb-4">Turnout</h3>
-
+            <h3 className="text-lg font-semibold mb-6">Turnout</h3>
+            <Votes yesVotes={signatures.filter(([address, signed]) => signed).length} noVotes={signatures.filter(([address, signed]) => !signed).length} quorum={quorum} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">All Votes</h3>
+            <h3 className="text-lg font-semibold mb-4 mt-8">All Votes</h3>
             <Table className="mb-8">
               <TableBody>
                 {signatures?.map((signature: any, index: number) => (
@@ -150,15 +189,15 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             <CardHeader className="border-b pb-3 pt-3 px-0">
               <div className="grid grid-cols-3 divide-x">
                 <div>
-                  <p className="flex justify-center mb-2 text-sm">ID</p>
+                  <p className="flex justify-center mb-2 text-sm text-gray-500">ID</p>
                   <p className="flex justify-center">#{id}</p>
                 </div>
                 <div>
-                  <p className="flex justify-center mb-2 text-sm">Status</p>
+                  <p className="flex justify-center mb-2 text-sm text-gray-500">Status</p>
                   <p className="flex justify-center">{status}</p>
                 </div>
                 <div>
-                  <p className="flex justify-center mb-2 text-sm">Your Vote</p>
+                  <p className="flex justify-center mb-2 text-sm text-gray-500">Your Vote</p>
                   <p className="flex justify-center">
                     {hasUserSinged(signatures)}
                   </p>
@@ -167,19 +206,22 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             </CardHeader>
             <CardContent className="pt-4">
               <div className="mb-4">
-                <p className="mb-2 text-sm">Proposer</p>
-                <p className="">{`${sender.slice(0, 4)}...${sender.slice(-4)}`}</p>
+                <p className="mb-2 text-sm text-gray-500">Proposer</p>
+                <p className="mb-2">{`${sender.slice(0, 4)}...${sender.slice(-4)}`}</p>
+                <Separator />
               </div>
               <div className="mb-4">
-                <p className="mb-2 text-sm">Type</p>
-                <p className="">{type}</p>
+                <p className="mb-2 text-sm text-gray-500">Type</p>
+                <p className="mb-2">{type}</p>
+                <Separator />
               </div>
               <div className="mb-4">
-                <p className="mb-2 text-sm">Amount</p>
-                <p className="">{proposal?.amount}</p>
+                <p className="mb-2 text-sm text-gray-500">Amount</p>
+                <p className="mb-2">{proposal?.amount}</p>
+                <Separator />
               </div>
               <div>
-                <p className="mb-2 text-sm">Token</p>
+                <p className="mb-2 text-sm text-gray-500">Token</p>
                 <p className="">{`${proposal?.token.slice(0, 4)}...${proposal?.token.slice(-4)}`}</p>
               </div>
             </CardContent>
