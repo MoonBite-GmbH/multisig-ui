@@ -14,6 +14,7 @@ import { Check, Cross, VoteIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ToastAction } from "@/components/ui/Toast";
+import Link from "next/link";
 
 interface ProposalPageParams {
   readonly params: {
@@ -37,19 +38,20 @@ const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
     <div className="flex flex-col items-center">
       <div className="flex justify-around w-full text-center mb-2">
         <div className="text-green-500 text-xs">Yes: {yesVotes}</div>
-        <div className="text-gray-500 text-xs">No: {noVotes}</div>
+        <div className="text-gray-500 text-xs">Quorum: {quorumPercentage}%</div>
+        <div className="text-red-500 text-xs">No: {noVotes}</div>
       </div>
       <div className="w-full bg-gray-600 rounded-full h-3 flex relative">
         <div
-          className="bg-green-500 h-full rounded-l-lg"
+          className={`bg-green-500 h-full rounded-l-lg ${yesPercentage === 100 && "rounded-r-lg"}`}
           style={{ width: `${yesPercentage}%` }}
         ></div>
         <div
           className="absolute w-1 rounded-sm bg-gray-200"
           style={{
             left: `${quorumPercentage}%`,
-            top: '-4px', // Overlaps 3px above the progress bar
-            bottom: '-4px', // Overlaps 3px below the progress bar
+            top: "-4px", // Overlaps 3px above the progress bar
+            bottom: "-4px", // Overlaps 3px below the progress bar
           }}
         ></div>
       </div>
@@ -132,7 +134,11 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
           <h2 className="text-xl mb-8">{proposal?.description}</h2>
           <div>
             <h3 className="text-lg font-semibold mb-6">Turnout</h3>
-            <Votes yesVotes={signatures.filter(([address, signed]) => signed).length} noVotes={signatures.filter(([address, signed]) => !signed).length} quorum={quorum} />
+            <Votes
+              yesVotes={signatures.filter(([address, signed]) => signed).length}
+              noVotes={signatures.filter(([address, signed]) => !signed).length}
+              quorum={quorum}
+            />
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4 mt-8">All Votes</h3>
@@ -141,12 +147,21 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                 {signatures?.map((signature: any, index: number) => (
                   <TableRow key={index}>
                     <TableCell>
-                      {signature[0]}
+                      <Link
+                        target="__blank"
+                        href={`https://stellar.expert/explorer/public/account/${sender}`}
+                      >
+                        {signature[0]}
+                      </Link>
                     </TableCell>
                     <TableCell>
-                      {signature[0] ? <Check width={16}/> : <Cross width={16}/>}
+                      {signature[0] ? (
+                        <Check width={16} />
+                      ) : (
+                        <Cross width={16} />
+                      )}
                     </TableCell>
-                </TableRow>
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>
@@ -166,22 +181,24 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
 
                   toast({
                     className: cn(
-                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
                     ),
                     title: "Signed!",
                     description: `You successfully signed the proposal.`,
                   });
-                  
+
                   init();
-                } catch(e) {
+                } catch (e) {
                   toast({
                     className: cn(
-                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
                     ),
                     variant: "destructive",
                     title: "Uh oh! Something went wrong.",
                     description: "There was a problem with your request.",
-                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                    action: (
+                      <ToastAction altText="Try again">Try again</ToastAction>
+                    ),
                   });
                 }
               }}
@@ -199,23 +216,25 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                       params.multisigId,
                       params.proposalId
                     );
-  
+
                     toast({
                       className: cn(
-                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
                       ),
                       title: "Executed!",
                       description: `You successfully executed the proposal.`,
                     });
-                  } catch(e) {
+                  } catch (e) {
                     toast({
                       className: cn(
-                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
                       ),
                       variant: "destructive",
                       title: "Uh oh! Something went wrong.",
                       description: "There was a problem with your request.",
-                      action: <ToastAction altText="Try again">Try again</ToastAction>,
+                      action: (
+                        <ToastAction altText="Try again">Try again</ToastAction>
+                      ),
                     });
                   }
                 }}
@@ -230,15 +249,21 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             <CardHeader className="border-b pb-3 pt-3 px-0">
               <div className="grid grid-cols-3 divide-x">
                 <div>
-                  <p className="flex justify-center mb-2 text-sm text-gray-500">ID</p>
+                  <p className="flex justify-center mb-2 text-sm text-gray-500">
+                    ID
+                  </p>
                   <p className="flex justify-center">#{id}</p>
                 </div>
                 <div>
-                  <p className="flex justify-center mb-2 text-sm text-gray-500">Status</p>
+                  <p className="flex justify-center mb-2 text-sm text-gray-500">
+                    Status
+                  </p>
                   <p className="flex justify-center">{status}</p>
                 </div>
                 <div>
-                  <p className="flex justify-center mb-2 text-sm text-gray-500">Your Vote</p>
+                  <p className="flex justify-center mb-2 text-sm text-gray-500">
+                    Your Vote
+                  </p>
                   <p className="flex justify-center">
                     {hasUserSinged(signatures)}
                   </p>
@@ -248,7 +273,14 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             <CardContent className="pt-4">
               <div className="mb-4">
                 <p className="mb-2 text-sm text-gray-500">Proposer</p>
-                <p className="mb-2">{`${sender.slice(0, 4)}...${sender.slice(-4)}`}</p>
+                <p className="mb-2 hover:underline">
+                  <Link
+                    target="__blank"
+                    href={`https://stellar.expert/explorer/public/account/${sender}`}
+                  >
+                    {`${sender.slice(0, 4)}...${sender.slice(-4)}`}
+                  </Link>
+                </p>
                 <Separator />
               </div>
               <div className="mb-4">
@@ -263,7 +295,14 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               </div>
               <div>
                 <p className="mb-2 text-sm text-gray-500">Token</p>
-                <p className="">{`${proposal?.token.slice(0, 4)}...${proposal?.token.slice(-4)}`}</p>
+                <p className="hover:underline">
+                  <Link
+                    target="__blank"
+                    href={`https://stellar.expert/explorer/public/contract/${proposal?.token}`}
+                  >
+                    {`${proposal?.token.slice(0, 4)}...${proposal?.token.slice(-4)}`}
+                  </Link>
+                </p>
               </div>
             </CardContent>
           </Card>
