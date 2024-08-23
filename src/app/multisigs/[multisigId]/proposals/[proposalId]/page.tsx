@@ -3,15 +3,17 @@
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Separator } from "@/components/ui/Separator";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { useMultisig } from "@/hooks/useMultisig";
 import { useProposal } from "@/hooks/useProposal";
-import { Proposal } from "@/lib/contract";
+import { useToast } from "@/components/ui/useToast";
 import { executeProposal, signProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { usePersistStore } from "@/state/store";
 import { Check, Cross, VoteIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { ToastAction } from "@/components/ui/Toast";
 
 interface ProposalPageParams {
   readonly params: {
@@ -57,6 +59,7 @@ const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
 
 const ProposalPage = ({ params }: ProposalPageParams) => {
   const appStore = usePersistStore();
+  const { toast } = useToast();
 
   const [id, setId] = useState<number>(0);
   const [type, setType] = useState<string>("");
@@ -153,14 +156,34 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               variant="outline"
               className="mr-2"
               onClick={async () => {
-                const result = await signProposal(
-                  new xBull(),
-                  appStore.wallet.address!,
-                  params.multisigId,
-                  params.proposalId
-                );
+                try {
+                  const result = await signProposal(
+                    new xBull(),
+                    appStore.wallet.address!,
+                    params.multisigId,
+                    params.proposalId
+                  );
 
-                console.log(result);
+                  toast({
+                    className: cn(
+                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                    ),
+                    title: "Signed!",
+                    description: `You successfully signed the proposal.`,
+                  });
+                  
+                  init();
+                } catch(e) {
+                  toast({
+                    className: cn(
+                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                    ),
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: "There was a problem with your request.",
+                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                  });
+                }
               }}
             >
               Sign
@@ -169,14 +192,32 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               <Button
                 variant="outline"
                 onClick={async () => {
-                  const result = await executeProposal(
-                    new xBull(),
-                    appStore.wallet.address!,
-                    params.multisigId,
-                    params.proposalId
-                  );
-
-                  console.log(result);
+                  try {
+                    const result = await executeProposal(
+                      new xBull(),
+                      appStore.wallet.address!,
+                      params.multisigId,
+                      params.proposalId
+                    );
+  
+                    toast({
+                      className: cn(
+                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                      ),
+                      title: "Executed!",
+                      description: `You successfully executed the proposal.`,
+                    });
+                  } catch(e) {
+                    toast({
+                      className: cn(
+                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                      ),
+                      variant: "destructive",
+                      title: "Uh oh! Something went wrong.",
+                      description: "There was a problem with your request.",
+                      action: <ToastAction altText="Try again">Try again</ToastAction>,
+                    });
+                  }
                 }}
               >
                 Execute
