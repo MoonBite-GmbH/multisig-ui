@@ -42,7 +42,6 @@ export default function Home() {
     if (!store.wallet.address) return;
 
     const _msigs = await getUserMultisigs(store.wallet.address);
-    console.log(_msigs);
     setMultisigEntries(_msigs);
   };
 
@@ -142,6 +141,7 @@ export default function Home() {
                   proposalEntries &&
                   proposalEntries.map((proposal: any, index: number) => (
                     proposal.status.tag === "Open" && <TableRow
+                      className="cursor-pointer"
                       key={index}
                       onClick={() => {
                         router.push(
