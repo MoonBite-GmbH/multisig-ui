@@ -13,7 +13,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "Sorosig - Your multisig companion",
+  title: "Teken - Your multisig companion",
   description: "You're multisig companion",
 };
 

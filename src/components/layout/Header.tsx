@@ -19,7 +19,7 @@ export default function Header() {
           className="hidden items-center justify-between gap-2 md:flex"
         >
           <Boxes className="h-6 w-6" />
-          <h1 className="text-lg font-semibold">Sorosig</h1>
+          <h1 className="text-lg font-semibold">Teken</h1>
         </Link>
         <div className={cn("block md:!hidden")}>
           <MobileSidebar />
