@@ -26,8 +26,6 @@ export default function MultisigsPage() {
 
     const _msigs = await getUserMultisigs(store.wallet.address);
     setEntries(_msigs);
-
-    console.log(_msigs);
   };
 
   useEffect(() => {
