@@ -25,10 +25,9 @@ import { usePersistStore } from "@/state/store";
 import { useToast } from "@/components/ui/useToast";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
-import * as MultisigContract from "@/lib/contract";
-import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
 import { createTransactionProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
+import { SelectValue } from "@radix-ui/react-select";
 
 const schema = z.object({
   type: z.enum(["transaction", "update"], {
@@ -195,7 +194,9 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
                 <FormLabel>Type</FormLabel>
                 <FormControl>
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Type" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="transaction">
                         Transaction Proposal
