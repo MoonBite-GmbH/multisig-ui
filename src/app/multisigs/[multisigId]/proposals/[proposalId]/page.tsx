@@ -41,13 +41,13 @@ const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
         <div className="text-muted-foreground text-xs">Passing threshold: {quorumPercentage}%</div>
         <div className="text-red-500 text-xs">No: {noVotes}</div>
       </div>
-      <div className="w-full bg-gray-600 rounded-full h-3 flex relative">
+      <div className="w-full bg-secondary rounded-full h-3 flex relative">
         <div
-          className={`bg-green-500 h-full rounded-l-lg ${yesPercentage === 100 && "rounded-r-lg"}`}
+          className={`bg-primary h-full rounded-l-lg ${yesPercentage === 100 && "rounded-r-lg"}`}
           style={{ width: `${yesPercentage}%` }}
         ></div>
         <div
-          className="absolute w-1 rounded-sm bg-gray-200"
+          className="absolute w-2 rounded-sm border-2 border-primary bg-background"
           style={{
             left: `${quorumPercentage}%`,
             top: "-4px", // Overlaps 3px above the progress bar
