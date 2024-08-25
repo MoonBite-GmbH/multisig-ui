@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 const schema = z.object({
   name: z.string().nonempty({ message: "Required" }),
   description: z.string().nonempty({ message: "Required" }),
-  quorum: z.number().min(1, "Must be greater than zero"),
+  threshold: z.number().min(1, "Must be greater than zero"),
   members: z
     .array(z.object({ address: z.string().nonempty({ message: "Required" }) }))
     .min(1, "At least one member is required"),
@@ -51,14 +51,14 @@ const CreateMultisigPage: NextPage = () => {
     defaultValues: {
       name: "",
       description: "",
-      quorum: 20,
+      threshold: 20,
       members: [{ address: "" }],
     },
   });
 
   const onSubmit = async (values: any) => {
     // Call deployMultisigContract
-    const { name, description, quorum, members } = values;
+    const { name, description, threshold, members } = values;
 
     // Error if wallet address is not set
     if (!appStore.wallet.address) {
@@ -75,7 +75,7 @@ const CreateMultisigPage: NextPage = () => {
     }
 
     // If values not set, return
-    if (!name || !description || !quorum || !members) {
+    if (!name || !description || !threshold || !members) {
       toast({
         className: cn(
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
@@ -95,7 +95,7 @@ const CreateMultisigPage: NextPage = () => {
         {
           name,
           description,
-          threshold: quorum / 10,
+          threshold: threshold / 10,
           members: memberAddresses,
         },
       );
@@ -168,11 +168,11 @@ const CreateMultisigPage: NextPage = () => {
           />
 
           <FormField
-            name="quorum"
+            name="threshold"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quorum (In Percent)</FormLabel>
+                <FormLabel>Passing Threshold (In Percent)</FormLabel>
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
