@@ -25,7 +25,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/Carousel";
 
-import { VoteIcon } from "lucide-react";
+import { UserIcon, VoteIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePersistStore } from "@/state/store";
@@ -38,15 +38,11 @@ export default function Home() {
   const [multisigEntries, setMultisigEntries] = useState<any[]>([]);
   const [proposalEntries, setProposalEntries] = useState<any[]>([]);
 
-  const notification = {
-    title: "There are 4 new proposals to review!",
-    description: "1 hour ago",
-  };
-
   const init = async () => {
     if (!store.wallet.address) return;
 
     const _msigs = await getUserMultisigs(store.wallet.address);
+    console.log(_msigs);
     setMultisigEntries(_msigs);
   };
 
@@ -104,6 +100,18 @@ export default function Home() {
                         <CardDescription>
                           {msig.info.description}
                         </CardDescription>
+                        <CardContent className="pb-0 pt-4">
+                        <div className="flex justify-around">
+                          <div className="flex">
+                            <UserIcon width={20} />
+                            <p className="ml-1">{msig.members.length}</p>
+                          </div>
+                          <div className="flex">
+                            <VoteIcon width={20} />
+                            <p className="ml-1">{msig.proposals.length}</p>
+                          </div>
+                        </div>
+                      </CardContent>
                       </CardHeader>
                     </Card>
                   </div>
@@ -123,9 +131,9 @@ export default function Home() {
               <TableCaption>A list of your unvoted proposals.</TableCaption>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="">Multisig</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead className="w-[100px]">Satus</TableHead>
                   <TableHead>Title</TableHead>
+                  <TableHead>Description</TableHead>
                   <TableHead className="text-right">Vote</TableHead>
                 </TableRow>
               </TableHeader>
@@ -141,10 +149,10 @@ export default function Home() {
                         );
                       }}
                     >
+                      <TableCell>{proposal.status.tag}</TableCell>
                       <TableCell className="font-medium">
                         {proposal.proposal.values[0].title}
                       </TableCell>
-                      <TableCell>{proposal.status.tag}</TableCell>
                       <TableCell>
                         {proposal.proposal.values[0].description}
                       </TableCell>
