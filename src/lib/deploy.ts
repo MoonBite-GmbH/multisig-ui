@@ -80,9 +80,11 @@ export const getUserMultisigs = async (walletAddress: string) => {
       networkPassphrase: NETWORK_PASSPHRASE,
     });
 
+    console.log("msig")
+
     // Query multisig Info
     const info = (await multisigContract.query_multisig_info()).result.unwrap();
-
+    
     // Query multisig members
     const members = (await multisigContract.query_multisig_members()).result.unwrap();
 
@@ -92,7 +94,7 @@ export const getUserMultisigs = async (walletAddress: string) => {
 
     for(const proposal of _proposals) {
       const signatures = (await multisigContract.query_signatures({
-        proposal_id: proposal.id
+        proposal_id: BigInt(proposal.id)
       })).result.unwrap()
 
       proposals.push({...proposal, signatures});
