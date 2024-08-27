@@ -25,7 +25,7 @@ import { usePersistStore } from "@/state/store";
 import { useToast } from "@/components/ui/useToast";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
-import { createTransactionProposal } from "@/lib/multisig";
+import { createTransactionProposal, createUpdateProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { SelectValue } from "@radix-ui/react-select";
 import { useRouter } from "next/navigation";
@@ -158,12 +158,17 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           });
           return;
         }
-        const wasmHashBuffer = Buffer.from(new_wasm_hash, "hex");
-        /*
-        await createUpdateProposal({
-          sender: appStore.wallet.address!,
-          new_wasm_hash: wasmHashBuffer,
-        });*/
+
+        const result = await createUpdateProposal(
+          new xBull(),
+          appStore.wallet.address!,
+          params.multisigId,
+          {
+            wasmHash: new_wasm_hash
+          }
+        );
+
+        setTimeout(() => router.push(`/multisigs/${params.multisigId}`), 1000);
       }
       toast({
         className: cn(
