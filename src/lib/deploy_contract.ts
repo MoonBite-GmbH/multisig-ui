@@ -4,6 +4,7 @@ import {
   Client as ContractClient,
   ClientOptions as ContractClientOptions,
   Spec as ContractSpec,
+  Result,
 } from "@stellar/stellar-sdk/contract";
 
 export type u32 = number;
