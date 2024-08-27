@@ -37,9 +37,9 @@ const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
   return (
     <div className="flex flex-col items-center">
       <div className="flex justify-around w-full text-center mb-2">
-        <div className="text-green-500 text-xs">Yes: {yesVotes}</div>
+        <div className="text-green-500 text-xs">Signatures: {yesVotes}</div>
         <div className="text-muted-foreground text-xs">Passing threshold: {quorumPercentage}%</div>
-        <div className="text-red-500 text-xs">No: {noVotes}</div>
+        <div className="text-red-500 text-xs">Abstain: {noVotes}</div>
       </div>
       <div className="w-full bg-secondary rounded-full h-3 flex relative">
         <div
@@ -141,7 +141,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
             />
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-3">All Votes</h3>
+            <h3 className="text-lg font-semibold mb-3">All Signatures</h3>
             <Table className="mb-8">
               <TableBody>
                 {signatures?.map((signature: any, index: number) => (
@@ -261,7 +261,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                 </div>
                 <div>
                   <p className="flex justify-center mb-2 text-sm text-muted-foreground">
-                    Your Vote
+                    Signed
                   </p>
                   <p className="flex justify-center">
                     {hasUserSinged(signatures)}
