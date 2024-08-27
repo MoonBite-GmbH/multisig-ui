@@ -3,10 +3,13 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    const result = await sql`CREATE TABLE IF NOT EXISTS multisigs (
-          id VARCHAR PRIMARY KEY,
-          members TEXT[]
-        );`;
+    await sql`DROP TABLE IF EXISTS multisigs;`;
+    const result = await sql`
+      CREATE TABLE multisigs (
+        id VARCHAR PRIMARY KEY,
+        members TEXT[]
+      );
+    `;
     return NextResponse.json({ result }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });

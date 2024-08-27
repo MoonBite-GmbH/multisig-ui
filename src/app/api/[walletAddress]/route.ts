@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 
+export const fetchCache = "force-no-store";
+
 export async function GET(req: NextRequest, { params }: { params: { walletAddress: string } }) {
   const walletAddress = params.walletAddress;
 
@@ -13,6 +15,8 @@ export async function GET(req: NextRequest, { params }: { params: { walletAddres
       SELECT * FROM multisigs
       WHERE members @> ARRAY[${walletAddress}];
     `;
+
+    console.log(result.rows)
     
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Member not found' }, { status: 404 });
