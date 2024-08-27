@@ -27,11 +27,12 @@ import { deployMultisigContract, setUserMultisig } from "@/lib/deploy";
 import { xBull } from "@/lib/wallets/xbull";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   name: z.string().nonempty({ message: "Required" }),
   description: z.string().nonempty({ message: "Required" }),
-  threshold: z.number().min(1, "Must be greater than zero"),
+  threshold: z.coerce.number().min(1, "Must be greater than zero"),
   members: z
     .array(z.object({ address: z.string().nonempty({ message: "Required" }) }))
     .min(1, "At least one member is required"),
@@ -44,6 +45,7 @@ interface Member {
 const CreateMultisigPage: NextPage = () => {
   const [members, setMembers] = useState<Member[]>([{ address: "" }]);
   const appStore = usePersistStore();
+  const router = useRouter();
   const { toast } = useToast();
 
   const form = useForm({
@@ -51,7 +53,7 @@ const CreateMultisigPage: NextPage = () => {
     defaultValues: {
       name: "",
       description: "",
-      threshold: 20,
+      threshold: 1,
       members: [{ address: "" }],
     },
   });
@@ -95,7 +97,7 @@ const CreateMultisigPage: NextPage = () => {
         {
           name,
           description,
-          threshold: threshold / 10,
+          threshold,
           members: memberAddresses,
         },
       );
@@ -109,6 +111,8 @@ const CreateMultisigPage: NextPage = () => {
           title: "Multisig created!",
           description: `Your multisig contract ${result} has been successfully created.`,
         });
+
+        setTimeout(() => router.push(`/multisigs/${result}`), 1000);
       }
     } catch (e) {
       toast({
@@ -172,7 +176,7 @@ const CreateMultisigPage: NextPage = () => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Passing Threshold (In Percent)</FormLabel>
+                <FormLabel>Passing Threshold</FormLabel>
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
