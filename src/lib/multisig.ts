@@ -45,7 +45,7 @@ export const createTransactionProposal = async (
       recipient,
       amount: BigInt(amount),
       token,
-      expiration_date: expiration_date ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
+      expiration_date: expiration_date ? BigInt(Math.round(expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
     });
 
     const res = await tx.signAndSend();
@@ -82,7 +82,7 @@ export const createUpdateProposal = async (
     const tx = await client.create_update_proposal({
       sender: userPublicKey,
       new_wasm_hash: Buffer.from(wasmHash),
-      expiration_date: expiration_date ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
+      expiration_date: expiration_date ? BigInt(Math.round(expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
     });
 
     const res = await tx.signAndSend();

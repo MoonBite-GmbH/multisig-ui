@@ -151,7 +151,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
             recipient,
             amount,
             token,
-            creation_date: new Date(new Date().setHours(0, 0, 0, 0)),
+            creation_date: new Date(),
             expiration_date,
           }
         );
@@ -178,7 +178,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           params.multisigId,
           {
             wasmHash: new_wasm_hash,
-            creation_date: new Date(new Date().setHours(0, 0, 0, 0)),
+            creation_date: new Date(),
             expiration_date,
           }
         );
