@@ -142,7 +142,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           }
         );
 
-        setTimeout(() => router.push(`/multisigs/${params.multisigId}/${result}`), 1000);
+        setTimeout(() => router.push(`/multisigs/${params.multisigId}`), 1000);
 
       } else {
         if (!new_wasm_hash) {
