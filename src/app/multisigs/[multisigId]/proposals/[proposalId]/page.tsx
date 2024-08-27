@@ -80,6 +80,8 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
   const [signatures, setSignatures] = useState<any[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [quorum, setQuorum] = useState<number>(0);
+  const [creation, setCreation] = useState<Date | undefined>(undefined);
+  const [expiration, setExpiration] = useState<Date | undefined>(undefined);
 
   const _proposalInfo = useProposal(params.multisigId, params.proposalId);
   const _multisigInfo = useMultisig(params.multisigId);
@@ -89,6 +91,8 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
     const { info, signatures, isReady } = await _proposalInfo;
 
     setQuorum(multisig.info.quorum_bps);
+    setCreation(new Date(Number(info.creation_timestamp) * 1000));
+    setExpiration(new Date(Number(info.expiration_timestamp) * 1000));
 
     setId(Number(info.id));
     setType(info.proposal.tag);
@@ -285,6 +289,19 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               <div className="mb-4">
                 <p className="mb-2 text-sm text-muted-foreground">Type</p>
                 <p className="mb-2">{type}</p>
+                <Separator />
+              </div>
+              <div className="mb-4">
+                <div className="grid grid-cols-2 mb-2">
+                  <div>
+                    <p className="mb-2 text-sm text-muted-foreground">Creation</p>
+                    <p>{creation?.toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-sm text-muted-foreground">Expiration</p>
+                    <p>{expiration?.toLocaleDateString()}</p>
+                  </div>
+                </div>
                 <Separator />
               </div>
               <div className="mb-4">

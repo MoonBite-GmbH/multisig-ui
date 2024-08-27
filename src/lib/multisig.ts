@@ -16,6 +16,7 @@ export const createTransactionProposal = async (
     recipient,
     amount,
     token,
+    creation_date,
     expiration_date,
   }: {
     title: string;
@@ -23,6 +24,7 @@ export const createTransactionProposal = async (
     recipient: string;
     amount: number;
     token: string;
+    creation_date: Date;
     expiration_date: Date | undefined;
   },
 ) => {
@@ -43,7 +45,7 @@ export const createTransactionProposal = async (
       recipient,
       amount: BigInt(amount),
       token,
-      expiration_date: expiration_date ? BigInt(expiration_date.getTime()) : undefined,
+      expiration_date: expiration_date ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
     });
 
     const res = await tx.signAndSend();
@@ -59,10 +61,12 @@ export const createUpdateProposal = async (
   contractId: string,
   {
     wasmHash,
-    expiration_date
+    expiration_date,
+    creation_date,
   }: {
     wasmHash: string;
     expiration_date: Date | undefined;
+    creation_date: Date;
   },
 ) => {
   // Create Client
@@ -78,7 +82,7 @@ export const createUpdateProposal = async (
     const tx = await client.create_update_proposal({
       sender: userPublicKey,
       new_wasm_hash: Buffer.from(wasmHash),
-      expiration_date: expiration_date ? BigInt(expiration_date.getTime()) : undefined,
+      expiration_date: expiration_date ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
     });
 
     const res = await tx.signAndSend();
