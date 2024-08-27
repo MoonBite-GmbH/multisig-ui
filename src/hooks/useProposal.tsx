@@ -1,5 +1,5 @@
 import * as MultisigContract from "../lib/contract";
-import { MULTISIGS, NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
+import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
 
 export const useProposal = async (multisigId: string, proposalId: string) => {
   // Instantiate Msig class
@@ -22,9 +22,11 @@ export const useProposal = async (multisigId: string, proposalId: string) => {
     proposal_id: BigInt(proposalId)
   })).result.unwrap();
 
+  console.log(isReady)
+
   return {
     info,
     signatures,
-    isReady
+    isReady,
   };
 };

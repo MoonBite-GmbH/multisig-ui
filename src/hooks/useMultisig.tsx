@@ -1,5 +1,5 @@
 import * as MultisigContract from "../lib/contract";
-import { MULTISIGS, NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
+import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
 
 export const useMultisig = async (multisigId: string) => {
   // Instantiate Msig class
