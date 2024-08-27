@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { createTransactionProposal } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { SelectValue } from "@radix-ui/react-select";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   type: z.enum(["transaction", "update"], {
@@ -59,6 +60,7 @@ interface CreatePorposalPageParams {
 
 const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
   const appStore = usePersistStore();
+  const router = useRouter();
   const { toast } = useToast();
 
   const form = useForm({
@@ -139,6 +141,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
             token,
           }
         );
+
+        setTimeout(() => router.push(`/multisigs/${params.multisigId}/${result}`), 1000);
 
       } else {
         if (!new_wasm_hash) {
