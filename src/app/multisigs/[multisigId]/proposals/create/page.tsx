@@ -4,9 +4,11 @@ import { NextPage } from "next";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,21 +27,28 @@ import { usePersistStore } from "@/state/store";
 import { useToast } from "@/components/ui/useToast";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
-import { createTransactionProposal, createUpdateProposal } from "@/lib/multisig";
+import {
+  createTransactionProposal,
+  createUpdateProposal,
+} from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { SelectValue } from "@radix-ui/react-select";
 import { useRouter } from "next/navigation";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/Calendar";
 
 const schema = z.object({
   type: z.enum(["transaction", "update"], {
     required_error: "Type is required",
   }),
-  title: z.string().nonempty({ message: "Required" }),
-  description: z.string().nonempty({ message: "Required" }),
+  title: z.string().nonempty({ message: "Required" }).optional(),
+  description: z.string().nonempty({ message: "Required" }).optional(),
   recipient: z.string().nonempty({ message: "Required" }).optional(),
   amount: z.coerce.number().min(1, "Must be greater than zero").optional(),
   token: z.string().nonempty({ message: "Required" }).optional(),
   new_wasm_hash: z.string().optional(),
+  expiration_date: z.date().optional(),
 });
 
 interface ProposalForm {
@@ -50,6 +59,7 @@ interface ProposalForm {
   amount?: number;
   token?: string;
   new_wasm_hash?: string;
+  expiration_date: Date | undefined;
 }
 
 interface CreatePorposalPageParams {
@@ -73,6 +83,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
       amount: 1,
       token: "",
       new_wasm_hash: "",
+      expiration_date: undefined,
     },
   });
 
@@ -85,12 +96,13 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
       amount,
       token,
       new_wasm_hash,
+      expiration_date,
     } = values;
 
     if (!appStore.wallet.address) {
       toast({
         className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
         ),
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -103,7 +115,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
     if (!title || !description) {
       toast({
         className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
         ),
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -118,7 +130,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
         if (!recipient || !amount || !token) {
           toast({
             className: cn(
-              "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+              "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
             ),
             variant: "destructive",
             title: "Uh oh! Something went wrong.",
@@ -128,7 +140,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           });
           return;
         }
-        
+
         const result = await createTransactionProposal(
           new xBull(),
           appStore.wallet.address!,
@@ -139,16 +151,16 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
             recipient,
             amount,
             token,
+            expiration_date,
           }
         );
 
         setTimeout(() => router.push(`/multisigs/${params.multisigId}`), 1000);
-
       } else {
         if (!new_wasm_hash) {
           toast({
             className: cn(
-              "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+              "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
             ),
             variant: "destructive",
             title: "Uh oh! Something went wrong.",
@@ -164,7 +176,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           appStore.wallet.address!,
           params.multisigId,
           {
-            wasmHash: new_wasm_hash
+            wasmHash: new_wasm_hash,
+            expiration_date,
           }
         );
 
@@ -172,7 +185,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
       }
       toast({
         className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
         ),
         title: "Proposal created!",
         description: "Your proposal has been successfully created.",
@@ -180,7 +193,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
     } catch (e) {
       toast({
         className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
         ),
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -192,7 +205,9 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
 
   return (
     <div className="md: p-8">
-      <h1 className="text-2xl font-semibold mb-4">Create New Proposal for Multisig</h1>
+      <h1 className="text-2xl font-semibold mb-4">
+        Create New Proposal for Multisig
+      </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -219,36 +234,36 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
             )}
           />
 
-          <FormField
-            name="title"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            name="description"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           {form.watch("type") === "transaction" && (
             <>
+              <FormField
+                name="title"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="description"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 name="recipient"
                 control={form.control}
@@ -308,6 +323,47 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
               )}
             />
           )}
+
+          <FormField
+            name="expiration_date"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Expiration Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date < new Date()
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </FormItem>
+            )}
+          />
 
           <Button type="submit" variant="default">
             Create Proposal
