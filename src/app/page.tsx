@@ -55,21 +55,15 @@ export default function Home() {
     const _proposalEntries: any[] = [];
 
     multisigEntries.forEach((msig: any) => {
+      console.log(msig)
       msig.proposals.forEach((proposal: any) => {
-        _proposalEntries.push({ ...proposal, multisigAddress: msig.address });
+        _proposalEntries.push({ ...proposal, multisigAddress: msig.address, multisigName: msig.info.name });
       });
     });
 
+    console.log(_proposalEntries)
     setProposalEntries(_proposalEntries);
   }, [multisigEntries]);
-
-  const hasUserSinged = (signatures: any[]) => {
-    const foundSignature = signatures.find(signature => signature[0] === store.wallet.address);
-    
-    if(foundSignature && foundSignature[1]) {
-      return <VoteIcon />;
-    }
-  }
 
   return (
     <>
@@ -130,10 +124,10 @@ export default function Home() {
               <TableCaption>A list of your unvoted proposals.</TableCaption>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">Satus</TableHead>
+                  <TableHead className="w-[90px]">Expiration</TableHead>
+                  <TableHead className="w-[100px]">Type</TableHead>
+                  <TableHead>Multisig</TableHead>
                   <TableHead>Title</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Vote</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -149,15 +143,17 @@ export default function Home() {
                         );
                       }}
                     >
-                      <TableCell>{proposal.status.tag}</TableCell>
                       <TableCell className="font-medium">
-                        {proposal.proposal.values[0].title}
+                        {new Date(Number(proposal.expiration_timestamp) * 1000).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        {proposal.proposal.values[0].description}
+                        {proposal.proposal.tag}
                       </TableCell>
-                      <TableCell className="flex justify-end">
-                        {hasUserSinged(proposal.signatures)}
+                      <TableCell>
+                        {proposal.multisigName}
+                      </TableCell>
+                      <TableCell>
+                        {proposal.proposal.values[0].title}
                       </TableCell>
                     </TableRow>
                   ))}
