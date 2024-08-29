@@ -7,9 +7,13 @@ import { UserNav } from "@/components/layout/UserNav";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggler } from "@/components/ui/ThemeToggler";
 import { usePersistStore } from "@/state/store";
+import { WalletModal } from "./WalletModal";
+import { useState } from "react";
 
 export default function Header() {
   const storePersist = usePersistStore();
+
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <div className="supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur">
@@ -30,15 +34,20 @@ export default function Header() {
           {storePersist.wallet.address ? (
             <UserNav />
           ) : (
-            <Button
-              size="sm"
-              onClick={() => storePersist.connectWallet("xbull")}
-            >
-              Connect xBull
+            <Button size="sm" onClick={() => setOpen(true)}>
+              Connect Wallet
             </Button>
           )}
         </div>
       </nav>
+      <WalletModal
+        open={open}
+        setOpen={setOpen}
+        onWalletClick={(wallet: string) => {
+          storePersist.connectWallet(wallet);
+          setOpen(false);
+        }}
+      />
     </div>
   );
 }
