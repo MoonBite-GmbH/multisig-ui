@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import {
   createTransactionProposal,
   createUpdateProposal,
+  getLatestProposalId,
 } from "@/lib/multisig";
 import { xBull } from "@/lib/wallets/xbull";
 import { SelectValue } from "@radix-ui/react-select";
@@ -156,7 +157,9 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           }
         );
 
-        setTimeout(() => router.push(`/multisigs/${params.multisigId}`), 1000);
+        const proposalId = await getLatestProposalId(params.multisigId);
+
+        setTimeout(() => router.push(`/multisigs/${params.multisigId}/proposals/${proposalId}`), 1000);
       } else {
         if (!new_wasm_hash) {
           toast({
@@ -183,7 +186,9 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           }
         );
 
-        setTimeout(() => router.push(`/multisigs/${params.multisigId}`), 1000);
+        const proposalId = await getLatestProposalId(params.multisigId);
+
+        setTimeout(() => router.push(`/multisigs/${params.multisigId}/proposals/${proposalId}`), 1000);
       }
       toast({
         className: cn(
