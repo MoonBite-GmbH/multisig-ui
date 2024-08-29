@@ -92,6 +92,18 @@ export const createUpdateProposal = async (
   }
 };
 
+export const getLatestProposalId = async(multisigId: string) => {
+  const multisigContract = new MultisigContract.Client({
+    contractId: multisigId,
+    rpcUrl: RPC_URL,
+    networkPassphrase: NETWORK_PASSPHRASE,
+  });
+
+  const latest = (await multisigContract.query_last_proposal_id()).result.unwrap();
+
+  return latest;
+}
+
 export const signProposal = async (
   wallet: Wallet,
   userPublicKey: string,
