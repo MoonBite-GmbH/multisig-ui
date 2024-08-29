@@ -80,8 +80,6 @@ export const getUserMultisigs = async (walletAddress: string) => {
       networkPassphrase: NETWORK_PASSPHRASE,
     });
 
-    console.log("msig")
-
     // Query multisig Info
     const info = (await multisigContract.query_multisig_info()).result.unwrap();
     
