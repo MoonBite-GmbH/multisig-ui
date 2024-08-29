@@ -79,7 +79,9 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
         <div>
           <div className="mx-auto">
             <h1 className="text-2xl font-semibold mb-4">{info.name}</h1>
-            <h2 className="text-xl mb-8 text-muted-foreground">{info.description}</h2>
+            <h2 className="text-xl mb-8 text-muted-foreground">
+              {info.description}
+            </h2>
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-3">Members</h3>
               {members.map((member, index) => (
@@ -110,10 +112,11 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Proposal ID</TableHead>
-                    <TableHead className="w-[100px]">Sender</TableHead>
-                    <TableHead className="w-[200px]">Type</TableHead>
-                    <TableHead className="w-[200px]">Status</TableHead>
+                    <TableHead className="w-[60px]">ID</TableHead>
+                    <TableHead className="w-[80px]">Status</TableHead>
+                    <TableHead className="w-[90px]">Expiration</TableHead>
+                    <TableHead className="w-[100px]">Type</TableHead>
+                    <TableHead>Title</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -128,13 +131,18 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                       }}
                     >
                       <TableCell>{Number(entry.id)}</TableCell>
-                      <TableCell>{entry.sender}</TableCell>
-                      <TableCell>{entry.proposal.tag}</TableCell>
                       <TableCell
                         className={`text-sm ${entry.status.tag === "Open" ? "text-green-700" : "text-orange-700"}`}
                       >
                         {entry.status.tag}
                       </TableCell>
+                      <TableCell>
+                        {new Date(
+                          Number(entry.expiration_timestamp) * 1000
+                        ).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>{entry.proposal.tag}</TableCell>
+                      <TableCell>{entry.proposal.values[0].title}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -143,13 +151,20 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
             <div className="block xl:hidden">
               {proposals.map((entry, index) => (
                 <div key={index} className="mb-1 p-3 border rounded">
-                  <div className="flex justify-between mb-4">
-                    <p className="text-sm font-bold">{Number(entry.id)}</p>
-                    <p className="text-sm">{entry.proposal.tag}</p>
+                  <div className="flex mb-4 items-center">
+                    <p className="text-sm font-bold mr-4">{Number(entry.id)}</p>
+                    <p>{entry.proposal.values[0].title}</p>
+                  </div>
+                  <div className="flex justify-between">
                     <p
                       className={`text-sm ${entry.status.tag === "Open" ? "text-green-700" : "text-orange-700"}`}
                     >
                       {entry.status.tag}
+                    </p>
+                    <p>
+                      {new Date(
+                        Number(entry.expiration_timestamp) * 1000
+                      ).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
