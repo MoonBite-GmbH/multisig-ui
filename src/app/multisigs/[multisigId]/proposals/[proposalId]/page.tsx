@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ToastAction } from "@/components/ui/Toast";
 import Link from "next/link";
+import Signer from "@/lib/wallets/Signer";
 
 interface ProposalPageParams {
   readonly params: {
@@ -176,8 +177,11 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               className="mr-2"
               onClick={async () => {
                 try {
+                  const signer = new Signer();
+                  const wallet = await signer.getWallet();
+
                   const result = await signProposal(
-                    new xBull(),
+                    wallet!,
                     appStore.wallet.address!,
                     params.multisigId,
                     params.proposalId
@@ -213,8 +217,11 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               <Button
                 onClick={async () => {
                   try {
+                    const signer = new Signer();
+                    const wallet = await signer.getWallet();
+
                     const result = await executeProposal(
-                      new xBull(),
+                      wallet!,
                       appStore.wallet.address!,
                       params.multisigId,
                       params.proposalId

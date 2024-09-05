@@ -38,6 +38,7 @@ import { useRouter } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/Calendar";
+import Signer from "@/lib/wallets/Signer";
 
 const schema = z.object({
   type: z.enum(["transaction", "update"], {
@@ -142,8 +143,11 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           return;
         }
 
+        const signer = new Signer();
+        const wallet = await signer.getWallet();
+
         const result = await createTransactionProposal(
-          new xBull(),
+          wallet!,
           appStore.wallet.address!,
           params.multisigId,
           {
@@ -175,8 +179,11 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           return;
         }
 
+        const signer = new Signer();
+        const wallet = await signer.getWallet();
+
         const result = await createUpdateProposal(
-          new xBull(),
+          wallet!,
           appStore.wallet.address!,
           params.multisigId,
           {

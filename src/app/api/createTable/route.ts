@@ -2,6 +2,8 @@ import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+  if(process.env.NODE_ENV === "production") return NextResponse.json({}, {status: 404})
+
   try {
     await sql`DROP TABLE IF EXISTS multisigs;`;
     const result = await sql`

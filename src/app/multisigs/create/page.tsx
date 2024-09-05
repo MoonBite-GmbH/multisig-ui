@@ -28,6 +28,7 @@ import { xBull } from "@/lib/wallets/xbull";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import Signer from "@/lib/wallets/Signer";
 
 const schema = z.object({
   name: z.string().nonempty({ message: "Required" }),
@@ -91,8 +92,11 @@ const CreateMultisigPage: NextPage = () => {
     }
     const memberAddresses = members.map((member: Member) => member.address);
     try {
+      const signer = new Signer();
+      const wallet = await signer.getWallet();
+
       const result = await deployMultisigContract(
-        new xBull(),
+        wallet!,
         appStore.wallet.address!,
         {
           name,
