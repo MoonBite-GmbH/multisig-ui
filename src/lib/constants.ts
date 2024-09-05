@@ -25,7 +25,7 @@ export const NETWORK_PASSPHRASE: string = "Public Global Stellar Network ; Septe
  * The Soroban RPC endpoint used to initialize this library.
  */
 export const RPC_URL: string =
-  "https://soroban-testnet.stellar.org/";
+  "https://mainnet.stellar.validationcloud.io/v1/YcyPYotN_b6-_656rpr0CabDwlGgkT42NCzPVIqcZh0";
 
 export const DEPLOY_CONTRACT_ID: string =
   "CATZ324BNPPAUPA5ZZZR2UTSTUOWRS2GKGDMIHAN7U5S2CVWLIHUBY3Y";
