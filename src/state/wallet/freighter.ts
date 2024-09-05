@@ -16,7 +16,7 @@ export function freighter(): Connector {
       browserExtension:
         "https://chrome.google.com/webstore/detail/freighter/bcacfldlkkdogcmkkibnjlakofdplcbk?hl=en",
     },
-    isConnected(): boolean {
+    async isConnected(): Promise<boolean> {
       return !!freighterApi?.isConnected();
     },
     async getNetworkDetails(): Promise<NetworkDetails> {

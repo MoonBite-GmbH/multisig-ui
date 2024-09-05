@@ -16,7 +16,7 @@ export function xbull(): Connector {
       browserExtension:
         "https://chrome.google.com/webstore/detail/freighter/bcacfldlkkdogcmkkibnjlakofdplcbk?hl=en",
     },
-    isConnected(): boolean {
+    async isConnected(): Promise<boolean> {
       const bridge: xBullWalletConnect = new xBullWalletConnect();
       return bridge.publicKey !== undefined;
     },
