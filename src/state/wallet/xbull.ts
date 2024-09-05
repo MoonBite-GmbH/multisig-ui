@@ -1,9 +1,6 @@
 import freighterApi from "@stellar/freighter-api";
-import {
-  Connector,
-  NetworkDetails,
-} from "../../../../phoenix-frontend/packages/types/src";
 import { xBullWalletConnect } from "xBull-Wallet-Connect";
+import { Connector, NetworkDetails } from "../types";
 
 export function xbull(): Connector {
   return {

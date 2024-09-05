@@ -1,9 +1,6 @@
 import freighterApi from "@stellar/freighter-api";
-import {
-  Connector,
-  NetworkDetails,
-} from "../../../../phoenix-frontend/packages/types/src";
 import { NETWORK_PASSPHRASE } from "@/lib/constants";
+import { Connector, NetworkDetails } from "../types";
 
 export function freighter(): Connector {
   return {
