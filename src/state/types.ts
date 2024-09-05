@@ -1,9 +1,17 @@
 import { Horizon } from "@stellar/stellar-sdk";
-import { LayoutActions } from "../../../phoenix-frontend/packages/types/src/state/layout";
 
 interface GeneralStore {
   server: Horizon.Server;
   networkPassphrase: string;
+}
+
+export interface LayoutActions {
+  walletModalOpen: boolean;
+  setWalletModalOpen: (open: boolean) => void;
+  tourRunning: boolean;
+  setTourRunning: (running: boolean) => void;
+  tourStep: number;
+  setTourStep: (step: number) => void;
 }
 
 export type AppStore = WalletActions & LayoutActions & GeneralStore;
