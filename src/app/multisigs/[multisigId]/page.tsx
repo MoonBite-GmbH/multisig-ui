@@ -65,7 +65,6 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
 
   const init = async () => {
     const sigInfo = await _msig;
-    console.log(sigInfo);
     setInfo(sigInfo.info);
     setMembers(sigInfo.members);
     setProposals(sigInfo.proposals);

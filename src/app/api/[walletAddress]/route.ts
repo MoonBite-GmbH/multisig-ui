@@ -15,8 +15,6 @@ export async function GET(req: NextRequest, { params }: { params: { walletAddres
       SELECT * FROM multisigs
       WHERE members @> ARRAY[${walletAddress}];
     `;
-
-    console.log(result.rows)
     
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Member not found' }, { status: 404 });

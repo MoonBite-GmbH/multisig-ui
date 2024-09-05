@@ -55,7 +55,6 @@ export default function Home() {
     const _proposalEntries: any[] = [];
 
     multisigEntries.forEach((msig: any) => {
-      console.log(msig);
       msig.proposals.forEach((proposal: any) => {
         _proposalEntries.push({
           ...proposal,

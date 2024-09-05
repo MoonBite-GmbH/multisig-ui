@@ -47,7 +47,6 @@ export const createConnectWalletActions = () => {
       // Get the user's address from the wallet.
       let address = "";
 
-      console.log("Wallet: ", wallet);
       switch (wallet) {
         case "freighter":
           address = await freighter().getPublicKey();
@@ -56,7 +55,6 @@ export const createConnectWalletActions = () => {
           address = await xbull().getPublicKey();
           break;
         case "lobstr":
-          console.log("Connect lobstr");
           address = await lobstr().getPublicKey();
           break;
         default:
