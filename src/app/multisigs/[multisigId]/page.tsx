@@ -141,7 +141,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                         ).toLocaleDateString()}
                       </TableCell>
                       <TableCell>{entry.proposal.tag}</TableCell>
-                      <TableCell>{entry.proposal.values[0].title}</TableCell>
+                      <TableCell>{(entry.proposal.values[0] as any).title}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -152,7 +152,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                 <div key={index} className="mb-1 p-3 border rounded">
                   <div className="flex mb-4 items-center">
                     <p className="text-sm font-bold mr-4">{Number(entry.id)}</p>
-                    <p>{entry.proposal.values[0].title}</p>
+                    <p>{(entry.proposal.values[0] as any).title}</p>
                   </div>
                   <div className="flex justify-between">
                     <p
