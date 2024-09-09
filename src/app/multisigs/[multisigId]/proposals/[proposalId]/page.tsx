@@ -33,7 +33,7 @@ interface VotesProps {
 const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
   const totalVotes = yesVotes + noVotes;
   const yesPercentage = (yesVotes / totalVotes) * 100;
-  const quorumPercentage = quorum / 1000;
+  const quorumPercentage = quorum / 100;
 
   return (
     <div className="flex flex-col items-center">
