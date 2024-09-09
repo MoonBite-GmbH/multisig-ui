@@ -1,3 +1,4 @@
+import { Connector, NetworkDetails } from "@/state/types";
 import freighterApi from "@stellar/freighter-api";
 
 export function freighter(): Connector {
