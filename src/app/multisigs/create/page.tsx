@@ -21,10 +21,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/Accordion";
 import { Button } from "@/components/ui/Button";
+import { Slider } from "@/components/ui/Slider"; 
 import { usePersistStore } from "@/state/store";
 import { useToast } from "@/components/ui/useToast";
 import { deployMultisigContract, setUserMultisig } from "@/lib/deploy";
-import { xBull } from "@/lib/wallets/xbull";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -54,7 +54,7 @@ const CreateMultisigPage: NextPage = () => {
     defaultValues: {
       name: "",
       description: "",
-      threshold: 1,
+      threshold: 50,
       members: [{ address: "" }],
     },
   });
@@ -180,9 +180,19 @@ const CreateMultisigPage: NextPage = () => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Passing Threshold</FormLabel>
+                <FormLabel>Passing Threshold (in Percent)</FormLabel>
+                <div className="flex justify-end font-bold text-xs mt-2">{field.value}%</div>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Slider
+                    defaultValue={[50]}
+                    max={100}
+                    step={1}
+                    name={field.name}
+                    value={[field.value]}
+                    onValueChange={(vals) => {
+                      field.onChange(vals[0]);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
