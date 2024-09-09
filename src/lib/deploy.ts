@@ -39,7 +39,7 @@ export const deployMultisigContract = async (
     const random = crypto.getRandomValues(randomBytes);
 
     const salt = Buffer.from(random);
-    const quorum_bps = threshold * 100;
+    const quorum_bps = threshold * 1000;
 
     const tx = await client.deploy_new_multisig({
       deployer,

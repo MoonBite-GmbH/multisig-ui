@@ -29,7 +29,7 @@ export default class Signer {
    * @returns the wallet type from the local storage
    */
   getWalletType() {
-    const appStorageValue = localStorage?.getItem("app-storage");
+    const appStorageValue = localStorage?.getItem("wallet");
     if (appStorageValue !== null) {
       try {
         const parsedValue = JSON.parse(appStorageValue);
