@@ -44,7 +44,6 @@ export default function Header() {
         open={open}
         setOpen={setOpen}
         onWalletClick={(wallet: string) => {
-          console.log(wallet);
           storePersist.connectWallet(wallet);
           setOpen(false);
         }}
