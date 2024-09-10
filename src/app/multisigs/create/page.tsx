@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { NextPage } from "next";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,7 +21,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/Accordion";
 import { Button } from "@/components/ui/Button";
-import { Slider } from "@/components/ui/Slider"; 
+import { Slider } from "@/components/ui/Slider";
 import { usePersistStore } from "@/state/store";
 import { useToast } from "@/components/ui/useToast";
 import { deployMultisigContract, setUserMultisig } from "@/lib/deploy";
@@ -29,6 +29,7 @@ import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Signer from "@/lib/wallets/Signer";
+import { XIcon } from "lucide-react";
 
 const schema = z.object({
   name: z.string().nonempty({ message: "Required" }),
@@ -44,7 +45,6 @@ interface Member {
 }
 
 const CreateMultisigPage: NextPage = () => {
-  const [members, setMembers] = useState<Member[]>([{ address: "" }]);
   const appStore = usePersistStore();
   const router = useRouter();
   const { toast } = useToast();
@@ -59,6 +59,11 @@ const CreateMultisigPage: NextPage = () => {
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "members",
+  });
+
   const onSubmit = async (values: any) => {
     // Call deployMultisigContract
     const { name, description, threshold, members } = values;
@@ -67,7 +72,7 @@ const CreateMultisigPage: NextPage = () => {
     if (!appStore.wallet.address) {
       toast({
         className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
         ),
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -81,7 +86,7 @@ const CreateMultisigPage: NextPage = () => {
     if (!name || !description || !threshold || !members) {
       toast({
         className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
         ),
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -103,14 +108,14 @@ const CreateMultisigPage: NextPage = () => {
           description,
           threshold,
           members: memberAddresses,
-        },
+        }
       );
       if (result) {
         setUserMultisig(result, memberAddresses);
 
         toast({
           className: cn(
-            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+            "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
           ),
           title: "Multisig created!",
           description: `Your multisig contract ${result} has been successfully created.`,
@@ -121,7 +126,7 @@ const CreateMultisigPage: NextPage = () => {
     } catch (e) {
       toast({
         className: cn(
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
         ),
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -132,14 +137,15 @@ const CreateMultisigPage: NextPage = () => {
   };
 
   const handleAddMember = () => {
-    setMembers([...members, { address: "" }]);
+    append({ address: "" });
   };
 
   const handleRemoveMember = (index: number) => {
-    const newMembers = [...members];
-    newMembers.splice(index, 1);
-    setMembers(newMembers);
-    form.reset({ ...form.watch(), members: newMembers });
+    if (fields.length > 1) {
+      remove(index);
+    } else {
+      toast({ description: "At least one member is required" });
+    }
   };
 
   return (
@@ -181,7 +187,9 @@ const CreateMultisigPage: NextPage = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Passing Threshold (in Percent)</FormLabel>
-                <div className="flex justify-end font-bold text-xs mt-2">{field.value}%</div>
+                <div className="flex justify-end font-bold text-xs mt-2">
+                  {field.value}%
+                </div>
                 <FormControl>
                   <Slider
                     defaultValue={[50]}
@@ -200,34 +208,43 @@ const CreateMultisigPage: NextPage = () => {
           />
 
           <Accordion type={"multiple"}>
-            {members.map((member, index) => (
+            {fields.map((member, index) => (
               <AccordionItem key={index} value={index.toString()}>
                 <AccordionTrigger>Member {index + 1} Address</AccordionTrigger>
                 <AccordionContent>
-                  <FormField
-                    name={`members.${index}.address`}
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    onClick={() => handleRemoveMember(index)}
-                    disabled={members.length === 1}
-                  >
-                    Remove
-                  </Button>
+                  <div className="flex p-1">
+                    <Button
+                      className="mr-2 p-2"
+                      variant="outline"
+                      onClick={() => handleRemoveMember(index)}
+                      disabled={fields.length === 1}
+                    >
+                      <XIcon className="w-[16px]" />
+                    </Button>
+                    <FormField
+                      name={`members.${index}.address`}
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
 
-          <Button onClick={handleAddMember} variant="secondary" className="mb-4 mr-2">
+          <Button
+            onClick={handleAddMember}
+            type="button"
+            variant="secondary"
+            className="mb-4 mr-2"
+          >
             Add Member
           </Button>
 
