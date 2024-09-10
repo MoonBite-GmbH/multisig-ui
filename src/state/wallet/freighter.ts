@@ -25,6 +25,7 @@ export function freighter(): Connector {
       };
     },
     async getPublicKey(): Promise<string> {
+      await freighterApi.requestAccess();
       return await freighterApi.getPublicKey();
     },
     signTransaction(
