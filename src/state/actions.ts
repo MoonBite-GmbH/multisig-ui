@@ -23,7 +23,7 @@ export const createConnectWalletActions = () => {
       // Get the network details from the user's wallet.
       // TODO: Make this dynamic
       const networkDetails = {
-        network: "PUBLIC",
+        network: "public",
         networkPassphrase: NETWORK_PASSPHRASE,
         networkUrl: RPC_URL,
         sorobanRpcUrl: RPC_URL,
