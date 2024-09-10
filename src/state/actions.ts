@@ -51,6 +51,9 @@ export const createConnectWalletActions = () => {
         case "freighter":
           address = await freighter().getPublicKey();
           console.log(await freighter().getPublicKey());
+          if ((await freighter().getPublicKey()) === "") {
+            console.log(freighter().getNetworkDetails());
+          }
           break;
         case "xbull":
           address = await xbull().getPublicKey();
