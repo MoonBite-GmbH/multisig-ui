@@ -23,7 +23,7 @@ export const createConnectWalletActions = () => {
       // Get the network details from the user's wallet.
       // TODO: Make this dynamic
       const networkDetails = {
-        network: "STANDALONE",
+        network: "PUBLIC",
         networkPassphrase: NETWORK_PASSPHRASE,
         networkUrl: RPC_URL,
         sorobanRpcUrl: RPC_URL,
@@ -32,11 +32,11 @@ export const createConnectWalletActions = () => {
       // Throw an error if the network is not supported.
       if (
         !allChains.find(
-          (c: any) => c.networkPassphrase === networkDetails?.networkPassphrase,
+          (c: any) => c.networkPassphrase === networkDetails?.networkPassphrase
         )
       ) {
         const error = new Error(
-          "Your Wallet network is not supported in this app",
+          "Your Wallet network is not supported in this app"
         );
         throw error;
       }
@@ -50,6 +50,7 @@ export const createConnectWalletActions = () => {
       switch (wallet) {
         case "freighter":
           address = await freighter().getPublicKey();
+          console.log(await freighter().getPublicKey());
           break;
         case "xbull":
           address = await xbull().getPublicKey();
