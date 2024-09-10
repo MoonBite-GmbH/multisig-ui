@@ -208,8 +208,8 @@ const CreateMultisigPage: NextPage = () => {
           />
 
           <Accordion type={"multiple"}>
-            {fields.map((member, index) => (
-              <AccordionItem key={index} value={index.toString()}>
+            {fields.map((field, index) => (
+              <AccordionItem key={field.id} value={index.toString()}>
                 <AccordionTrigger>Member {index + 1} Address</AccordionTrigger>
                 <AccordionContent>
                   <div className="flex p-1">
