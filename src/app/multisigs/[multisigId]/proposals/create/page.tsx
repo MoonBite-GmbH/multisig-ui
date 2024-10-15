@@ -175,7 +175,6 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           1000
         );
       } else {
-        console.log(1);
         if (!new_wasm_hash) {
           toast({
             className: cn(

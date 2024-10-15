@@ -1,10 +1,7 @@
 import { Wallet } from "@/lib/wallets/types";
 import * as MultisigContract from "./contract";
 
-import {
-  NETWORK_PASSPHRASE,
-  RPC_URL,
-} from "@/lib/constants";
+import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
 
 export const createTransactionProposal = async (
   wallet: Wallet,
@@ -26,7 +23,7 @@ export const createTransactionProposal = async (
     token: string;
     creation_date: Date;
     expiration_date: Date | undefined;
-  },
+  }
 ) => {
   // Create Client
   const client = new MultisigContract.Client({
@@ -47,7 +44,9 @@ export const createTransactionProposal = async (
       recipient,
       amount: BigInt(amount),
       token,
-      expiration_date: expiration_date ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
+      expiration_date: expiration_date
+        ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
+        : undefined,
     });
 
     const res = await tx.signAndSend();
@@ -69,8 +68,24 @@ export const createUpdateProposal = async (
     wasmHash: string;
     expiration_date: Date | undefined;
     creation_date: Date;
-  },
+  }
 ) => {
+  function hexToUint8Array(hex: string): Uint8Array {
+    if (hex.length !== 64) {
+      throw new Error(
+        "Expected a 64-character hexadecimal string representing 32 bytes."
+      );
+    }
+
+    const uint8Array = new Uint8Array(32); // 32 bytes for the Uint8Array
+    for (let i = 0; i < 32; i++) {
+      const hexChunk = hex.substring(i * 2, i * 2 + 2);
+      uint8Array[i] = parseInt(hexChunk, 16);
+    }
+
+    return uint8Array;
+  }
+
   // Create Client
   const client = new MultisigContract.Client({
     publicKey: userPublicKey,
@@ -85,8 +100,10 @@ export const createUpdateProposal = async (
   try {
     const tx = await client.create_update_proposal({
       sender: userPublicKey,
-      new_wasm_hash: Buffer.from(wasmHash),
-      expiration_date: expiration_date ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000) : undefined,
+      new_wasm_hash: Buffer.from(hexToUint8Array(wasmHash)),
+      expiration_date: expiration_date
+        ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
+        : undefined,
     });
 
     const res = await tx.signAndSend();
@@ -96,23 +113,25 @@ export const createUpdateProposal = async (
   }
 };
 
-export const getLatestProposalId = async(multisigId: string) => {
+export const getLatestProposalId = async (multisigId: string) => {
   const multisigContract = new MultisigContract.Client({
     contractId: multisigId,
     rpcUrl: RPC_URL,
     networkPassphrase: NETWORK_PASSPHRASE,
   });
 
-  const latest = (await multisigContract.query_last_proposal_id()).result.unwrap();
+  const latest = (
+    await multisigContract.query_last_proposal_id()
+  ).result.unwrap();
 
   return latest;
-}
+};
 
 export const signProposal = async (
   wallet: Wallet,
   userPublicKey: string,
   contractId: string,
-  proposalId: string,
+  proposalId: string
 ) => {
   // Create Client
   const client = new MultisigContract.Client({
@@ -126,7 +145,7 @@ export const signProposal = async (
   try {
     const tx = await client.sign_proposal({
       sender: userPublicKey,
-      proposal_id: BigInt(proposalId)
+      proposal_id: BigInt(proposalId),
     });
 
     const res = await tx.signAndSend();
@@ -140,7 +159,7 @@ export const executeProposal = async (
   wallet: Wallet,
   userPublicKey: string,
   contractId: string,
-  proposalId: string,
+  proposalId: string
 ) => {
   // Create Client
   const client = new MultisigContract.Client({
@@ -154,7 +173,7 @@ export const executeProposal = async (
   try {
     const tx = await client.execute_proposal({
       sender: userPublicKey,
-      proposal_id: BigInt(proposalId)
+      proposal_id: BigInt(proposalId),
     });
 
     const res = await tx.signAndSend();
