@@ -39,7 +39,9 @@ const Votes = ({ yesVotes, noVotes, quorum }: VotesProps) => {
     <div className="flex flex-col items-center">
       <div className="flex justify-around w-full text-center mb-2">
         <div className="text-green-500 text-xs">Signatures: {yesVotes}</div>
-        <div className="text-muted-foreground text-xs">Passing threshold: {quorumPercentage}%</div>
+        <div className="text-muted-foreground text-xs">
+          Passing threshold: {quorumPercentage}%
+        </div>
         <div className="text-red-500 text-xs">Abstain: {noVotes}</div>
       </div>
       <div className="w-full bg-secondary rounded-full h-3 flex relative">
@@ -136,7 +138,9 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 md:col-span-6 lg:col-span-8">
           <h1 className="text-2xl font-semibold mb-4">{proposal?.title}</h1>
-          <h2 className="text-xl mb-8 text-muted-foreground">{proposal?.description}</h2>
+          <h2 className="text-xl mb-8 text-muted-foreground">
+            {proposal?.description}
+          </h2>
           <div className="mb-8">
             <h3 className="text-lg font-semibold mb-3">Turnout</h3>
             <Votes
@@ -301,11 +305,15 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
               <div className="mb-4">
                 <div className="grid grid-cols-2 mb-2">
                   <div>
-                    <p className="mb-2 text-sm text-muted-foreground">Creation</p>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                      Creation
+                    </p>
                     <p>{creation?.toLocaleDateString()}</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-sm text-muted-foreground">Expiration</p>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                      Expiration
+                    </p>
                     <p>{expiration?.toLocaleDateString()}</p>
                   </div>
                 </div>
@@ -316,17 +324,19 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                 <p className="mb-2">{proposal?.amount}</p>
                 <Separator />
               </div>
-              <div>
-                <p className="mb-2 text-sm text-muted-foreground">Token</p>
-                <p className="hover:underline">
-                  <Link
-                    target="__blank"
-                    href={`https://stellar.expert/explorer/public/contract/${proposal?.token}`}
-                  >
-                    {`${proposal?.token.slice(0, 4)}...${proposal?.token.slice(-4)}`}
-                  </Link>
-                </p>
-              </div>
+              {proposal?.token && (
+                <div>
+                  <p className="mb-2 text-sm text-muted-foreground">Token</p>
+                  <p className="hover:underline">
+                    <Link
+                      target="__blank"
+                      href={`https://stellar.expert/explorer/public/contract/${proposal?.token}`}
+                    >
+                      {`${proposal?.token.slice(0, 4)}...${proposal?.token.slice(-4)}`}
+                    </Link>
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
