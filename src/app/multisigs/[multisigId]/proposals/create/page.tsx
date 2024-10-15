@@ -35,7 +35,11 @@ import {
 import { xBull } from "@/lib/wallets/xbull";
 import { SelectValue } from "@radix-ui/react-select";
 import { useRouter } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/Popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/Calendar";
 import Signer from "@/lib/wallets/Signer";
@@ -44,11 +48,11 @@ const schema = z.object({
   type: z.enum(["transaction", "update"], {
     required_error: "Type is required",
   }),
-  title: z.string().nonempty({ message: "Required" }).optional(),
-  description: z.string().nonempty({ message: "Required" }).optional(),
-  recipient: z.string().nonempty({ message: "Required" }).optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  recipient: z.string().optional(),
   amount: z.coerce.number().min(1, "Must be greater than zero").optional(),
-  token: z.string().nonempty({ message: "Required" }).optional(),
+  token: z.string().optional(),
   new_wasm_hash: z.string().optional(),
   expiration_date: z.date().optional(),
 });
@@ -114,7 +118,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
       return;
     }
 
-    if (!title || !description) {
+    if (type == "transaction" && (!title || !description)) {
       toast({
         className: cn(
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
@@ -163,8 +167,15 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
 
         const proposalId = await getLatestProposalId(params.multisigId);
 
-        setTimeout(() => router.push(`/multisigs/${params.multisigId}/proposals/${proposalId}`), 1000);
+        setTimeout(
+          () =>
+            router.push(
+              `/multisigs/${params.multisigId}/proposals/${proposalId}`
+            ),
+          1000
+        );
       } else {
+        console.log(1);
         if (!new_wasm_hash) {
           toast({
             className: cn(
@@ -195,7 +206,13 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
 
         const proposalId = await getLatestProposalId(params.multisigId);
 
-        setTimeout(() => router.push(`/multisigs/${params.multisigId}/proposals/${proposalId}`), 1000);
+        setTimeout(
+          () =>
+            router.push(
+              `/multisigs/${params.multisigId}/proposals/${proposalId}`
+            ),
+          1000
+        );
       }
       toast({
         className: cn(
@@ -368,9 +385,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) =>
-                        date < new Date()
-                      }
+                      disabled={(date) => date < new Date()}
                       initialFocus
                     />
                   </PopoverContent>
