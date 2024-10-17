@@ -118,7 +118,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
       return;
     }
 
-    if (type == "transaction" && (!title || !description)) {
+    if (!title || !description) {
       toast({
         className: cn(
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
@@ -165,13 +165,13 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           }
         );
 
-        const proposalId = await getLatestProposalId(params.multisigId);
-
         setTimeout(
-          () =>
+          async () => {
+            const proposalId = await getLatestProposalId(params.multisigId);
             router.push(
               `/multisigs/${params.multisigId}/proposals/${proposalId}`
-            ),
+            );
+          },
           1000
         );
       } else {
@@ -197,19 +197,21 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           appStore.wallet.address!,
           params.multisigId,
           {
+            title,
+            description,
             wasmHash: new_wasm_hash,
             creation_date: new Date(),
             expiration_date,
           }
         );
 
-        const proposalId = await getLatestProposalId(params.multisigId);
-
         setTimeout(
-          () =>
+          async () => {
+            const proposalId = await getLatestProposalId(params.multisigId);
             router.push(
               `/multisigs/${params.multisigId}/proposals/${proposalId}`
-            ),
+            );
+          },
           1000
         );
       }
@@ -264,36 +266,36 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
             )}
           />
 
+          <FormField
+            name="title"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="description"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {form.watch("type") === "transaction" && (
             <>
-              <FormField
-                name="title"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="description"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 name="recipient"
                 control={form.control}

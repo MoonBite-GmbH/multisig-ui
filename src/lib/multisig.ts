@@ -36,24 +36,20 @@ export const createTransactionProposal = async (
 
   creation_date.setHours(0, 0, 0, 0);
 
-  try {
-    const tx = await client.create_transaction_proposal({
-      sender: userPublicKey,
-      title,
-      description,
-      recipient,
-      amount: BigInt(amount),
-      token,
-      expiration_date: expiration_date
-        ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
-        : undefined,
-    });
+  const tx = await client.create_transaction_proposal({
+    sender: userPublicKey,
+    title,
+    description,
+    recipient,
+    amount: BigInt(amount),
+    token,
+    expiration_date: expiration_date
+      ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
+      : undefined,
+  });
 
-    const res = await tx.signAndSend();
-    return res.result.unwrap();
-  } catch (error) {
-    console.error(error);
-  }
+  const res = await tx.signAndSend();
+  return res.result.unwrap();
 };
 
 export const createUpdateProposal = async (
@@ -61,10 +57,14 @@ export const createUpdateProposal = async (
   userPublicKey: string,
   contractId: string,
   {
+    title,
+    description,
     wasmHash,
     expiration_date,
     creation_date,
   }: {
+    title: string;
+    description: string;
     wasmHash: string;
     expiration_date: Date | undefined;
     creation_date: Date;
@@ -97,20 +97,18 @@ export const createUpdateProposal = async (
 
   creation_date.setHours(0, 0, 0, 0);
 
-  try {
-    const tx = await client.create_update_proposal({
-      sender: userPublicKey,
-      new_wasm_hash: Buffer.from(hexToUint8Array(wasmHash)),
-      expiration_date: expiration_date
-        ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
-        : undefined,
-    });
+  const tx = await client.create_update_proposal({
+    sender: userPublicKey,
+    title: title,
+    description: description,
+    new_wasm_hash: Buffer.from(hexToUint8Array(wasmHash)),
+    expiration_date: expiration_date
+      ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
+      : undefined,
+  });
 
-    const res = await tx.signAndSend();
-    return res.result.unwrap();
-  } catch (error) {
-    console.error(error);
-  }
+  const res = await tx.signAndSend();
+  return res.result.unwrap();
 };
 
 export const getLatestProposalId = async (multisigId: string) => {
