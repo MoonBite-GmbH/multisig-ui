@@ -109,13 +109,13 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
       //@ts-ignore
       amount: Number(info.proposal.values[0].amount),
       //@ts-ignore
-      description: info.proposal.values[0].description,
+      description: info.description,
       //@ts-ignore
       recipient: info.proposal.values[0].recipient,
       //@ts-ignore
-      title: info.proposal.values[0].title,
+      title: info.title,
       //@ts-ignore
-      token: info.proposal.values[0].token,
+      token: info.proposal.values.token,
     });
   };
 

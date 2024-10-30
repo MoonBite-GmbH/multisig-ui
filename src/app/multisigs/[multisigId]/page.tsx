@@ -141,7 +141,9 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                         ).toLocaleDateString()}
                       </TableCell>
                       <TableCell>{entry.proposal.tag}</TableCell>
-                      <TableCell>{(entry.proposal.values[0] as any).title}</TableCell>
+                      <TableCell>
+                        {entry.title}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -149,10 +151,18 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
             </div>
             <div className="block xl:hidden">
               {proposals.map((entry, index) => (
-                <div key={index} className="mb-1 p-3 border rounded">
+                <div
+                  key={index}
+                  className="mb-1 p-3 border rounded cursor-pointer"
+                  onClick={() => {
+                    router.push(
+                      `/multisigs/${params.multisigId}/proposals/${entry.id}`
+                    );
+                  }}
+                >
                   <div className="flex mb-4 items-center">
                     <p className="text-sm font-bold mr-4">{Number(entry.id)}</p>
-                    <p>{(entry.proposal.values[0] as any).title}</p>
+                    <p>{entry.title}</p>
                   </div>
                   <div className="flex justify-between">
                     <p
