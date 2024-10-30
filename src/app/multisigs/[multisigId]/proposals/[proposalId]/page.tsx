@@ -107,7 +107,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
 
     setProposal({
       //@ts-ignore
-      amount: Number(info.proposal.values[0].amount),
+      amount: Number(info.proposal.values[0].amount ? info.proposal.values[0].amount / 10 ** 7 : undefined),
       //@ts-ignore
       description: info.description,
       //@ts-ignore

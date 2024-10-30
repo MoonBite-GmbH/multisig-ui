@@ -41,7 +41,7 @@ export const createTransactionProposal = async (
     title,
     description,
     recipient,
-    amount: BigInt(amount),
+    amount: BigInt(amount * 10 ** 7),
     token,
     expiration_date: expiration_date
       ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
