@@ -124,20 +124,6 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                   </p>
                 ))}
               </div>
-              <div className="mb-8 flex-1">
-                <h3 className="text-lg font-semibold mb-3">Token Balances</h3>
-                {members.map((member, index) => (
-                  <p key={index} className="mb-2 truncate">
-                    <Link
-                      target="__blank"
-                      className="text-sm hover:underline"
-                      href={`https://stellar.expert/explorer/public/account/${member}`}
-                    >
-                      {member}
-                    </Link>
-                  </p>
-                ))}
-              </div>
             </div>
             <div className="flex justify-between mb-3">
               <h3 className="text-lg font-semibold">Proposals</h3>
