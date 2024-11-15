@@ -102,12 +102,17 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
     setSender(info.sender);
     setStatus(info.status.tag);
 
+    console.log(signatures);
+
     setSignatures(signatures);
     setIsReady(isReady);
 
     setProposal({
       //@ts-ignore
-      amount: Number(info.proposal.values[0].amount ? info.proposal.values[0].amount / 10 ** 7 : undefined),
+      amount: info.proposal.values[0].amount
+      //@ts-ignore
+        ? Number(info.proposal.values[0].amount) / 10 ** 7
+        : undefined,
       //@ts-ignore
       description: info.description,
       //@ts-ignore
@@ -123,14 +128,28 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
     init();
   }, []);
 
+  const isUserMember = (signatures: any[]) => {
+    const foundSignature = signatures.find(
+      (signature) => signature[0] === appStore.wallet.address
+    );
+
+    if (foundSignature) {
+      return true;
+    }
+
+    return false;
+  };
+
   const hasUserSinged = (signatures: any[]) => {
     const foundSignature = signatures.find(
       (signature) => signature[0] === appStore.wallet.address
     );
 
     if (foundSignature && foundSignature[1]) {
-      return <VoteIcon />;
+      return true;
     }
+
+    return false;
   };
 
   return (
@@ -164,99 +183,103 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                       </Link>
                     </TableCell>
                     <TableCell>
-                      {signature[0] ? (
-                        <Check width={16} />
-                      ) : (
-                        <Cross width={16} />
-                      )}
+                      {signature[1] && <Check width={16} />}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-          <div className="flex">
-            <Button
-              variant="outline"
-              className="mr-2"
-              onClick={async () => {
-                try {
-                  const signer = new Signer();
-                  const wallet = await signer.getWallet();
+          {isUserMember(signatures) && status !== "Closed" && (
+            <div className="flex">
+              {signatures && !hasUserSinged(signatures) && (
+                <Button
+                  variant="outline"
+                  className="mr-2"
+                  onClick={async () => {
+                    try {
+                      const signer = new Signer();
+                      const wallet = await signer.getWallet();
 
-                  const result = await signProposal(
-                    wallet!,
-                    appStore.wallet.address!,
-                    params.multisigId,
-                    params.proposalId
-                  );
+                      const result = await signProposal(
+                        wallet!,
+                        appStore.wallet.address!,
+                        params.multisigId,
+                        params.proposalId
+                      );
 
-                  toast({
-                    className: cn(
-                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                    ),
-                    title: "Signed!",
-                    description: `You successfully signed the proposal.`,
-                  });
+                      toast({
+                        className: cn(
+                          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
+                        ),
+                        title: "Signed!",
+                        description: `You successfully signed the proposal.`,
+                      });
 
-                  init();
-                } catch (e) {
-                  toast({
-                    className: cn(
-                      "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                    ),
-                    variant: "destructive",
-                    title: "Uh oh! Something went wrong.",
-                    description: "There was a problem with your request.",
-                    action: (
-                      <ToastAction altText="Try again">Try again</ToastAction>
-                    ),
-                  });
-                }
-              }}
-            >
-              Sign
-            </Button>
-            {isReady && (
-              <Button
-                onClick={async () => {
-                  try {
-                    const signer = new Signer();
-                    const wallet = await signer.getWallet();
+                      init();
+                    } catch (e) {
+                      toast({
+                        className: cn(
+                          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
+                        ),
+                        variant: "destructive",
+                        title: "Uh oh! Something went wrong.",
+                        description: "There was a problem with your request.",
+                        action: (
+                          <ToastAction altText="Try again">
+                            Try again
+                          </ToastAction>
+                        ),
+                      });
+                    }
+                  }}
+                >
+                  Sign
+                </Button>
+              )}
+              {isReady && (
+                <Button
+                  onClick={async () => {
+                    try {
+                      const signer = new Signer();
+                      const wallet = await signer.getWallet();
 
-                    const result = await executeProposal(
-                      wallet!,
-                      appStore.wallet.address!,
-                      params.multisigId,
-                      params.proposalId
-                    );
+                      const result = await executeProposal(
+                        wallet!,
+                        appStore.wallet.address!,
+                        params.multisigId,
+                        params.proposalId
+                      );
 
-                    toast({
-                      className: cn(
-                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                      ),
-                      title: "Executed!",
-                      description: `You successfully executed the proposal.`,
-                    });
-                  } catch (e) {
-                    toast({
-                      className: cn(
-                        "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
-                      ),
-                      variant: "destructive",
-                      title: "Uh oh! Something went wrong.",
-                      description: "There was a problem with your request.",
-                      action: (
-                        <ToastAction altText="Try again">Try again</ToastAction>
-                      ),
-                    });
-                  }
-                }}
-              >
-                Execute
-              </Button>
-            )}
-          </div>
+                      toast({
+                        className: cn(
+                          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
+                        ),
+                        title: "Executed!",
+                        description: `You successfully executed the proposal.`,
+                      });
+                    } catch (e) {
+                      toast({
+                        className: cn(
+                          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
+                        ),
+                        variant: "destructive",
+                        title: "Uh oh! Something went wrong.",
+                        description: "There was a problem with your request.",
+                        action: (
+                          <ToastAction altText="Try again">
+                            Try again
+                          </ToastAction>
+                        ),
+                      });
+                    }
+                  }}
+                >
+                  Execute
+                </Button>
+              )}
+            </div>
+          )}
         </div>
         <div className="col-span-12 md:col-span-6 lg:col-span-4">
           <Card className="mb-6">
@@ -279,7 +302,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                     Signed
                   </p>
                   <p className="flex justify-center">
-                    {hasUserSinged(signatures)}
+                    {hasUserSinged(signatures) && <VoteIcon />}
                   </p>
                 </div>
               </div>

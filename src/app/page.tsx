@@ -24,12 +24,15 @@ import {
   CarouselPrevious,
 } from "@/components/ui/Carousel";
 
-import { UserIcon, VoteIcon } from "lucide-react";
+import { Terminal, UserIcon, VoteIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePersistStore } from "@/state/store";
 import { getUserMultisigs } from "@/lib/deploy";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/Button";
+import { WalletModal } from "@/components/layout/WalletModal";
 
 export default function Home() {
   const router = useRouter();
@@ -37,6 +40,8 @@ export default function Home() {
 
   const [multisigEntries, setMultisigEntries] = useState<any[]>([]);
   const [proposalEntries, setProposalEntries] = useState<any[]>([]);
+
+  const [open, setOpen] = useState<boolean>(false);
 
   const init = async () => {
     if (!store.wallet.address) return;
@@ -70,6 +75,39 @@ export default function Home() {
   return (
     <>
       <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
+      {!store.wallet.address && (
+        <>
+          <Alert className="shadow-md border-b rounded-xl mb-6 p-6 flex flex-col md:flex-row md:items-center">
+            <div className="flex-grow">
+              <AlertTitle className="text-lg font-semibold">
+                Connect Your Wallet
+              </AlertTitle>
+              <AlertDescription className="text-gray-600 mt-1">
+                To access your dashboard and your multisigs, please connect your
+                wallet.
+              </AlertDescription>
+            </div>
+            <div className="mt-4 md:mt-0 md:ml-auto md:pr-4">
+              <Button
+                onClick={() => {
+                  setOpen(true);
+                }}
+                className="font-medium py-2 px-4 rounded-md transition-colors"
+              >
+                Connect Wallet
+              </Button>
+            </div>
+          </Alert>
+          <WalletModal
+            open={open}
+            setOpen={setOpen}
+            onWalletClick={(wallet: string) => {
+              store.connectWallet(wallet);
+              setOpen(false);
+            }}
+          />
+        </>
+      )}
       <h3 className="text-lg font-semibold mb-4">Multisigs</h3>
       <div className="px-8 mb-8">
         <Carousel

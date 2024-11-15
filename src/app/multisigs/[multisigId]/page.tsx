@@ -1,9 +1,8 @@
 "use client";
+import { Address, Contract, Horizon, Keypair } from "@stellar/stellar-sdk";
 import { useMultisig } from "@/hooks/useMultisig";
 import { useEffect, useState } from "react";
-import * as MultisigContract from "@/lib/contract";
 import { Proposal } from "@/lib/contract";
-import { NETWORK_PASSPHRASE, RPC_URL } from "@/lib/constants";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 import {
@@ -15,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import Link from "next/link";
+import { Server } from "@stellar/stellar-sdk/rpc";
 
 interface MultisigPageParams {
   readonly params: {
@@ -26,6 +26,29 @@ interface VotesProps {
   yesVotes: number;
   noVotes: number;
   abstainVotes: number;
+}
+
+async function getBalance(contractAddress: string): Promise<number> {
+  const server = new Horizon.Server("https://horizon.stellar.org");
+
+  try {
+    const account = await server.loadAccount(contractAddress);
+
+    console.log(account);
+
+    const tokenBalance = account.balances.find(
+      (balance: any) => balance.asset_code !== "XLM"
+    );
+
+    if (tokenBalance) {
+      return parseFloat(tokenBalance.balance);
+    } else {
+      return 0;
+    }
+  } catch (error) {
+    console.error("Error fetching token balance:", error);
+    return 0;
+  }
 }
 
 const Votes = ({ yesVotes, noVotes, abstainVotes }: VotesProps) => {
@@ -65,9 +88,14 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
 
   const init = async () => {
     const sigInfo = await _msig;
+
+    console.log(sigInfo);
+
     setInfo(sigInfo.info);
     setMembers(sigInfo.members);
     setProposals(sigInfo.proposals);
+
+    getBalance(params.multisigId);
   };
   useEffect(() => {
     init();
@@ -81,19 +109,35 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
             <h2 className="text-xl mb-8 text-muted-foreground">
               {info.description}
             </h2>
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-3">Members</h3>
-              {members.map((member, index) => (
-                <p key={index} className="mb-2 truncate">
-                  <Link
-                    target="__blank"
-                    className="text-sm hover:underline"
-                    href={`https://stellar.expert/explorer/public/account/${member}`}
-                  >
-                    {member}
-                  </Link>
-                </p>
-              ))}
+            <div className="flex flex-wrap">
+              <div className="mb-8 flex-1">
+                <h3 className="text-lg font-semibold mb-3">Members</h3>
+                {members.map((member, index) => (
+                  <p key={index} className="mb-2 truncate">
+                    <Link
+                      target="__blank"
+                      className="text-sm hover:underline"
+                      href={`https://stellar.expert/explorer/public/account/${member}`}
+                    >
+                      {member}
+                    </Link>
+                  </p>
+                ))}
+              </div>
+              <div className="mb-8 flex-1">
+                <h3 className="text-lg font-semibold mb-3">Token Balances</h3>
+                {members.map((member, index) => (
+                  <p key={index} className="mb-2 truncate">
+                    <Link
+                      target="__blank"
+                      className="text-sm hover:underline"
+                      href={`https://stellar.expert/explorer/public/account/${member}`}
+                    >
+                      {member}
+                    </Link>
+                  </p>
+                ))}
+              </div>
             </div>
             <div className="flex justify-between mb-3">
               <h3 className="text-lg font-semibold">Proposals</h3>
@@ -141,9 +185,7 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
                         ).toLocaleDateString()}
                       </TableCell>
                       <TableCell>{entry.proposal.tag}</TableCell>
-                      <TableCell>
-                        {entry.title}
-                      </TableCell>
+                      <TableCell>{entry.title}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
