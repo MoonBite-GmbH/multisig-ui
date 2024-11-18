@@ -8,7 +8,6 @@ import { useMultisig } from "@/hooks/useMultisig";
 import { useProposal } from "@/hooks/useProposal";
 import { useToast } from "@/components/ui/useToast";
 import { executeProposal, signProposal } from "@/lib/multisig";
-import { xBull } from "@/lib/wallets/xbull";
 import { usePersistStore } from "@/state/store";
 import { Check, Cross, VoteIcon } from "lucide-react";
 import { useEffect, useState } from "react";

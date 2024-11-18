@@ -140,17 +140,13 @@ export const signProposal = async (
     rpcUrl: RPC_URL,
   });
 
-  try {
-    const tx = await client.sign_proposal({
-      sender: userPublicKey,
-      proposal_id: BigInt(proposalId),
-    });
+  const tx = await client.sign_proposal({
+    sender: userPublicKey,
+    proposal_id: BigInt(proposalId),
+  });
 
-    const res = await tx.signAndSend();
-    return res.result.unwrap();
-  } catch (error) {
-    console.error(error);
-  }
+  const res = await tx.signAndSend();
+  return res.result.unwrap();
 };
 
 export const executeProposal = async (
@@ -168,15 +164,11 @@ export const executeProposal = async (
     rpcUrl: RPC_URL,
   });
 
-  try {
-    const tx = await client.execute_proposal({
-      sender: userPublicKey,
-      proposal_id: BigInt(proposalId),
-    });
+  const tx = await client.execute_proposal({
+    sender: userPublicKey,
+    proposal_id: BigInt(proposalId),
+  });
 
-    const res = await tx.signAndSend();
-    return res.result.unwrap();
-  } catch (error) {
-    console.error(error);
-  }
+  const res = await tx.signAndSend();
+  return res.result.unwrap();
 };
