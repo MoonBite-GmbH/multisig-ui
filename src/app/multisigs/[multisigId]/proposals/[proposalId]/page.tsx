@@ -92,6 +92,8 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
     const multisig = await _multisigInfo;
     const { info, signatures, isReady } = await _proposalInfo;
 
+    console.log(info);
+
     setQuorum(multisig.info.quorum_bps);
     setCreation(new Date(Number(info.creation_timestamp) * 1000));
     setExpiration(new Date(Number(info.expiration_timestamp) * 1000));
@@ -101,16 +103,14 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
     setSender(info.sender);
     setStatus(info.status.tag);
 
-    console.log(signatures);
-
     setSignatures(signatures);
     setIsReady(isReady);
 
     setProposal({
       //@ts-ignore
       amount: info.proposal.values[0].amount
-      //@ts-ignore
-        ? Number(info.proposal.values[0].amount) / 10 ** 7
+        ? //@ts-ignore
+          Number(info.proposal.values[0].amount) / 10 ** 7
         : undefined,
       //@ts-ignore
       description: info.description,
@@ -319,6 +319,22 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                 </p>
                 <Separator />
               </div>
+              {proposal && proposal.recipient && (
+                <div className="mb-4">
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    Recipient
+                  </p>
+                  <p className="mb-2 hover:underline">
+                    <Link
+                      target="__blank"
+                      href={`https://stellar.expert/explorer/public/account/${proposal.recipient}`}
+                    >
+                      {`${proposal.recipient.slice(0, 4)}...${proposal.recipient.slice(-4)}`}
+                    </Link>
+                  </p>
+                  <Separator />
+                </div>
+              )}
               <div className="mb-4">
                 <p className="mb-2 text-sm text-muted-foreground">Type</p>
                 <p className="mb-2">{type}</p>

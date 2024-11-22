@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { NextPage } from "next";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,7 +31,6 @@ import {
   createUpdateProposal,
   getLatestProposalId,
 } from "@/lib/multisig";
-import { xBull } from "@/lib/wallets/xbull";
 import { SelectValue } from "@radix-ui/react-select";
 import { useRouter } from "next/navigation";
 import {
@@ -40,7 +38,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/Popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { Calendar } from "@/components/ui/Calendar";
 import Signer from "@/lib/wallets/Signer";
 
@@ -79,6 +77,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
   const router = useRouter();
   const { toast } = useToast();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -94,6 +94,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
   });
 
   const onSubmit = async (values: ProposalForm) => {
+    setIsLoading(true);
+
     const {
       type,
       title,
@@ -115,6 +117,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
         description: "Please connect your wallet to continue.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
+
+      setIsLoading(false);
       return;
     }
 
@@ -128,6 +132,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
         description: "Please fill out all required fields.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
+
+      setIsLoading(false);
       return;
     }
 
@@ -223,6 +229,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
         description: "Your proposal has been successfully created.",
       });
     } catch (e) {
+      console.log(e);
+
       toast({
         className: cn(
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
@@ -232,6 +240,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
         description: "There was a problem with your request.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
+
+      setIsLoading(false);
     }
   };
 
@@ -395,7 +405,8 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
             )}
           />
 
-          <Button type="submit" variant="default">
+          <Button type="submit" variant="default" disabled={isLoading}>
+            {isLoading && <Loader2 className="animate-spin" />}
             Create Proposal
           </Button>
         </form>
