@@ -217,6 +217,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
 
                       init();
                     } catch (e) {
+                      console.log(e);
                       toast({
                         className: cn(
                           "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
@@ -258,6 +259,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
                         description: `You successfully executed the proposal.`,
                       });
                     } catch (e) {
+                      console.log(e);
                       toast({
                         className: cn(
                           "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
