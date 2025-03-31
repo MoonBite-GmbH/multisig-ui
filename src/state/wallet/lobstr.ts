@@ -41,15 +41,18 @@ export function lobstr(): Connector {
 
       return pubKey;
     },
-    signTransaction(
+    async signTransaction(
       xdr: string,
       opts?: {
         network?: string;
         networkPassphrase?: string;
         accountToSign?: string;
       },
-    ): Promise<string> {
-      return signTransaction(xdr);
+    ): Promise<{signedTxXdr: string; signerAddress?: string | undefined;}> {
+      return {
+        signedTxXdr: await signTransaction(xdr),
+        signerAddress: opts?.accountToSign,
+      }
     },
   };
 }

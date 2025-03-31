@@ -26,7 +26,7 @@ export function freighter(): Connector {
     },
     async getPublicKey(): Promise<string> {
       await freighterApi.requestAccess();
-      return await freighterApi.getPublicKey();
+      return (await freighterApi.getAddress()).address;
     },
     signTransaction(
       xdr: string,
@@ -35,7 +35,7 @@ export function freighter(): Connector {
         networkPassphrase?: string;
         accountToSign?: string;
       }
-    ): Promise<string> {
+    ): Promise<{signedTxXdr: string; signerAddress?: string | undefined;}> {
       return freighterApi.signTransaction(xdr, {
         networkPassphrase: NETWORK_PASSPHRASE,
       });

@@ -86,7 +86,7 @@ const ProposalPage = ({ params }: ProposalPageParams) => {
   const [expiration, setExpiration] = useState<Date | undefined>(undefined);
 
   const _proposalInfo = useProposal(params.multisigId, params.proposalId);
-  const _multisigInfo = useMultisig(params.multisigId);
+  const _multisigInfo = useMultisig(params.multisigId, appStore.wallet.address);
 
   const init = async () => {
     const multisig = await _multisigInfo;

@@ -67,7 +67,7 @@ export default class Signer {
    * @param message
    * @returns
    */
-  async sign(message: string) {
+  async sign(message: string): Promise<{signedTxXdr: string; signerAddress?: string | undefined;}> {
     if (this.wallet === undefined) {
       await this.getWallet();
     }

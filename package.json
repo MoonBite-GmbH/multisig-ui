@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@creit.tech/xbull-wallet-connect": "^0.3.0",
     "@hookform/resolvers": "^3.4.2",
     "@lobstrco/signer-extension-api": "^1.0.0-beta.0",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -23,8 +24,8 @@
     "@radix-ui/react-slider": "^1.2.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
-    "@stellar/freighter-api": "^2.0.0",
-    "@stellar/stellar-sdk": "12.0",
+    "@stellar/freighter-api": "^3.0.0",
+    "@stellar/stellar-sdk": "13.1.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@vercel/postgres": "^0.9.0",
     "class-variance-authority": "^0.7.0",
@@ -40,7 +41,6 @@
     "react-hook-form": "^7.51.5",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "xBull-Wallet-Connect": "https://github.com/Creit-Tech/xBull-Wallet-Connect.git",
     "zod": "^3.23.8",
     "zustand": "^4.5.2"
   },

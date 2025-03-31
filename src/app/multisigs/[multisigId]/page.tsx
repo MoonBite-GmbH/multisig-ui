@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/Table";
 import Link from "next/link";
 import { Server } from "@stellar/stellar-sdk/rpc";
+import { usePersistStore } from "@/state/store";
 
 interface MultisigPageParams {
   readonly params: {
@@ -83,8 +84,9 @@ const MultisigPage = ({ params }: MultisigPageParams) => {
   const [members, setMembers] = useState<string[]>([]);
   const [info, setInfo] = useState<any>();
   const [proposals, setProposals] = useState<Proposal[]>([]);
+  const store = usePersistStore();
 
-  const _msig = useMultisig(params.multisigId);
+  const _msig = useMultisig(params.multisigId, store.wallet.address);
 
   const init = async () => {
     const sigInfo = await _msig;

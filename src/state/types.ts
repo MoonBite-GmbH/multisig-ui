@@ -92,7 +92,7 @@ export type Connector = {
       networkPassphrase?: string;
       accountToSign?: string;
     },
-  ) => Promise<string>;
+  ) => Promise<{signedTxXdr: string; signerAddress?: string | undefined;}>;
 };
 
 export type InstructionStepName = "install" | "create" | "scan";

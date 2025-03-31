@@ -1,5 +1,5 @@
 import freighterApi from "@stellar/freighter-api";
-import { xBullWalletConnect } from "xBull-Wallet-Connect";
+import { xBullWalletConnect } from "@creit.tech/xbull-wallet-connect";
 import { Connector, NetworkDetails } from "../types";
 
 export function xbull(): Connector {
@@ -37,7 +37,7 @@ export function xbull(): Connector {
         networkPassphrase?: string;
         accountToSign?: string;
       },
-    ): Promise<string> {
+    ): Promise<{signedTxXdr: string; signerAddress?: string | undefined;}> {
       const bridge: xBullWalletConnect = new xBullWalletConnect();
 
       const signature = await bridge.sign({
@@ -47,7 +47,10 @@ export function xbull(): Connector {
       });
 
       bridge.closeConnections();
-      return signature;
+      return {
+        signedTxXdr: signature,
+        signerAddress: opts?.accountToSign!,
+      }
     },
   };
 }
