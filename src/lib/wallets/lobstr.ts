@@ -93,7 +93,7 @@ export class lobstr implements Wallet {
         }
       | undefined
   ): Promise<{
-    signedAuthEntry: Buffer | null;
+    signedAuthEntry: string | null;
     signerAddress: string;
   }> {
     throw new Error("Lobstr does not support signing authorization entries");

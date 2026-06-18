@@ -97,7 +97,7 @@ export class xBull implements Wallet {
         }
       | undefined
   ): Promise<{
-    signedAuthEntry: Buffer | null;
+    signedAuthEntry: string | null;
     signerAddress: string;
   }> {
     throw new Error("xBull does not support signing authorization entries");

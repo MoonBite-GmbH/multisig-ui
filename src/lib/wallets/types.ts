@@ -34,7 +34,7 @@ export interface Wallet {
         }
       | undefined
   ) => Promise<{
-    signedAuthEntry: Buffer | null;
+    signedAuthEntry: string | null;
     signerAddress: string;
   }>;
 }
