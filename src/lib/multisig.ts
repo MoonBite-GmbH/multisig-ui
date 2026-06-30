@@ -111,6 +111,49 @@ export const createUpdateProposal = async (
   return res.result.unwrap();
 };
 
+export const createMemberUpdateProposal = async (
+  wallet: Wallet,
+  userPublicKey: string,
+  contractId: string,
+  {
+    title,
+    description,
+    members,
+    expiration_date,
+    creation_date,
+  }: {
+    title: string;
+    description: string;
+    members: string[];
+    expiration_date: Date | undefined;
+    creation_date: Date;
+  }
+) => {
+  // Create Client
+  const client = new MultisigContract.Client({
+    publicKey: userPublicKey,
+    signTransaction: (tx: string) => wallet.signTransaction(tx),
+    contractId: contractId,
+    networkPassphrase: NETWORK_PASSPHRASE,
+    rpcUrl: RPC_URL,
+  });
+
+  creation_date.setHours(0, 0, 0, 0);
+
+  const tx = await client.create_member_update_proposal({
+    sender: userPublicKey,
+    title,
+    description,
+    new_members: members,
+    expiration_date: expiration_date
+      ? BigInt((expiration_date.getTime() - creation_date.getTime()) / 1000)
+      : undefined,
+  });
+
+  const res = await tx.signAndSend();
+  return res.result.unwrap();
+};
+
 export const getLatestProposalId = async (multisigId: string) => {
   const multisigContract = new MultisigContract.Client({
     contractId: multisigId,

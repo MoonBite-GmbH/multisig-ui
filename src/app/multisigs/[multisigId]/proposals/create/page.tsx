@@ -27,6 +27,7 @@ import { useToast } from "@/components/ui/useToast";
 import { ToastAction } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import {
+  createMemberUpdateProposal,
   createTransactionProposal,
   createUpdateProposal,
   getLatestProposalId,
@@ -43,7 +44,7 @@ import { Calendar } from "@/components/ui/Calendar";
 import Signer from "@/lib/wallets/Signer";
 
 const schema = z.object({
-  type: z.enum(["transaction", "update"], {
+  type: z.enum(["transaction", "update", "member_update"], {
     required_error: "Type is required",
   }),
   title: z.string().optional(),
@@ -52,6 +53,7 @@ const schema = z.object({
   amount: z.coerce.number().min(1, "Must be greater than zero").optional(),
   token: z.string().optional(),
   new_wasm_hash: z.string().optional(),
+  new_members: z.string().optional(),
   expiration_date: z.date().optional(),
 });
 
@@ -63,6 +65,7 @@ interface ProposalForm {
   amount?: number;
   token?: string;
   new_wasm_hash?: string;
+  new_members?: string;
   expiration_date: Date | undefined;
 }
 
@@ -89,6 +92,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
       amount: 1,
       token: "",
       new_wasm_hash: "",
+      new_members: "",
       expiration_date: undefined,
     },
   });
@@ -104,6 +108,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
       amount,
       token,
       new_wasm_hash,
+      new_members,
       expiration_date,
     } = values;
 
@@ -180,7 +185,7 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
           },
           1000
         );
-      } else {
+      } else if (type === "update") {
         if (!new_wasm_hash) {
           toast({
             className: cn(
@@ -206,6 +211,51 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
             title,
             description,
             wasmHash: new_wasm_hash,
+            creation_date: new Date(),
+            expiration_date,
+          }
+        );
+
+        setTimeout(
+          async () => {
+            const proposalId = await getLatestProposalId(params.multisigId);
+            router.push(
+              `/multisigs/${params.multisigId}/proposals/${proposalId}`
+            );
+          },
+          1000
+        );
+      } else {
+        const members = (new_members ?? "")
+          .split(/[\s,]+/)
+          .map((m) => m.trim())
+          .filter((m) => m.length > 0);
+
+        if (members.length === 0) {
+          toast({
+            className: cn(
+              "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4"
+            ),
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description:
+              "Please provide at least one member for the member update proposal.",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          });
+          return;
+        }
+
+        const signer = new Signer();
+        const wallet = await signer.getWallet();
+
+        const result = await createMemberUpdateProposal(
+          wallet!,
+          appStore.wallet.address!,
+          params.multisigId,
+          {
+            title,
+            description,
+            members,
             creation_date: new Date(),
             expiration_date,
           }
@@ -268,6 +318,9 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
                         Transaction Proposal
                       </SelectItem>
                       <SelectItem value="update">Update Proposal</SelectItem>
+                      <SelectItem value="member_update">
+                        Member Update Proposal
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -359,6 +412,25 @@ const CreateProposalPage = ({ params }: CreatePorposalPageParams) => {
                   <FormLabel>New WASM Hash</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {form.watch("type") === "member_update" && (
+            <FormField
+              name="new_members"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New Members</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="One address per line (or comma-separated)"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
